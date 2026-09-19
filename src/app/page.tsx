@@ -151,11 +151,12 @@ export default function HomePage() {
         <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="shrink-0">
             <Image
-              src={logoImage}
+              src={footerLogoImage}
               alt="Elevate Heart Foundation"
-              width={240}
-              height={200}
-              className=" "
+              width={150}
+              height={20}
+              objectFit="contain"
+              className="object-contain"
             />
           </Link>
 
@@ -181,7 +182,7 @@ export default function HomePage() {
 
             <Link
               href="/join"
-              className="inline-flex items-center gap-2 rounded-full bg-[#00674F] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#004D3A]"
+              className="hidden sm:inline-flex items-center gap-2 rounded-full bg-[#00674F] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#004D3A]"
             >
               <span>Join Elevate</span>
               <ArrowRight className="h-4 w-4" />
@@ -843,12 +844,12 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12">
             <div className="lg:col-span-5">
-              <div className="relative h-20 w-75 px-2 mb-4 overflow-hidden rounded bg-white">
+              <div className="relative h-14 flex items-center justify-center w-42 mb-4 overflow-hidden rounded bg-white">
                 <Image
                   src={footerLogoImage}
                   alt="Elevate Heart Foundation"
-                  sizes="240px"
-                  width={280}
+                  // sizes="240px"
+                  width={150}
                 />
               </div>
               <p>
