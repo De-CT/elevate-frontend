@@ -14,6 +14,6 @@ export const createAccount = async (data: RegisterData) => {
     const res = await api.post(`${ENDPOINTS.register}`, data);
     return res.data;
   } catch (e: any) {
-    throw new Error(e.response.data.message || e.message);
+    throw new Error(e.response.data.message ?? e.message);
   }
 };
