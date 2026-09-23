@@ -12,8 +12,8 @@ interface RegisterData {
 export const createAccount = async (data: RegisterData) => {
   try {
     const res = await api.post(`${ENDPOINTS.register}`, data);
-    console.log("register res", res);
-  } catch (e: unknown) {
-    console.log("error fro register", e);
+    return res.data;
+  } catch (e: any) {
+    throw new Error(e.response.data.message || e.message);
   }
 };

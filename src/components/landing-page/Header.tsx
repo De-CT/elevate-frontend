@@ -46,7 +46,7 @@ export function Header() {
             Sign In
           </button>
           <a
-            href="#programs"
+            href="/register"
             className="px-6 py-2.5 rounded-full font-sans text-sm font-bold text-on-primary bg-primary hover:bg-primary-container shadow-md hover:shadow-lg transition-all"
           >
             Join Elevate Heart
@@ -89,7 +89,7 @@ export function Header() {
               Sign In
             </button>
             <a
-              href="#programs"
+              href="/register"
               onClick={() => setOpen(false)}
               className="w-full text-center px-6 py-2.5 rounded-full font-sans text-sm font-bold text-on-primary bg-primary hover:bg-primary-container shadow-md transition-all"
             >

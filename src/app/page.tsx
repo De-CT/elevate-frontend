@@ -1,5 +1,4 @@
-import { Contact, Empowerment, FAQ, FinalCTA, Footer, Header, Hero, HowItWorks, MissionVision, Programs } from "@/components/LandingPage";
-import { Purpose } from "@/components/LandingPage/Purpose";
+import { Contact, Empowerment, FAQ, FinalCTA, Footer, Header, Hero, HowItWorks, MissionVision, Programs, Purpose } from "@/components/landing-page";
 
 
 

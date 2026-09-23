@@ -10,6 +10,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-genova);
   --font-display: var(--font-manifest);
+  --font-headline: var(--font-manifest);
+  --font-body: var(--font-genova);
 
   --color-primary: #004d3a;
   --color-primary-dark: #00674f;
@@ -25,6 +27,7 @@
 
   --color-secondary: #006b54;
   --color-secondary-brand: #16be97;
+  --color-secondary-accent: #16be97;
   --color-secondary-container: #69f7cd;
   --color-on-secondary: #ffffff;
   --color-on-secondary-container: #007058;
@@ -78,12 +81,12 @@
   --radius-full: 9999px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffffff;
+    --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   background: var(--background);

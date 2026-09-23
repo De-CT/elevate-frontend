@@ -18,7 +18,7 @@ export function FinalCTA() {
 
         <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
           <a
-            href="#programs"
+            href="/register"
             className="px-8 py-3.5 rounded-full bg-secondary-brand text-on-primary font-sans text-sm font-bold shadow-lg hover:bg-aqua-brand hover:text-on-surface transition-all"
           >
             Join Elevate Heart

@@ -11,7 +11,7 @@ const ABOUT_LINKS = [
 ];
 
 const INVOLVED_LINKS = [
-  { label: "Join Elevate Heart", href: "#programs" },
+  { label: "Join Elevate Heart", href: "/register" },
   { label: "Explore Programs", href: "#programs" },
   { label: "Contact", href: "#contact" },
 ];

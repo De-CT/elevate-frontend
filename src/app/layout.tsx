@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const genova = localFont({
@@ -48,7 +49,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${genova.variable} ${manifest.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+      </body>
     </html>
   );
 }

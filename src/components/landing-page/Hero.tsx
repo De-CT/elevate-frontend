@@ -37,7 +37,7 @@ export function Hero() {
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <a
-              href="#programs"
+              href="/register"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-primary text-on-primary font-sans text-sm font-bold shadow-md hover:bg-primary-container hover:shadow-lg transition-all"
             >
               Join Elevate Heart
