@@ -10,11 +10,77 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-genova);
   --font-display: var(--font-manifest);
+
+  --color-primary: #004d3a;
+  --color-primary-dark: #00674f;
+  --color-primary-container: #00674f;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #90e2c4;
+  --color-primary-fixed: #a0f3d4;
+  --color-primary-fixed-dim: #85d6b8;
+  --color-on-primary-fixed: #002117;
+  --color-on-primary-fixed-variant: #00513e;
+  --color-inverse-primary: #85d6b8;
+  --color-surface-tint: #0a6b53;
+
+  --color-secondary: #006b54;
+  --color-secondary-brand: #16be97;
+  --color-secondary-container: #69f7cd;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #007058;
+  --color-secondary-fixed: #6dfad0;
+  --color-secondary-fixed-dim: #4bddb4;
+  --color-on-secondary-fixed: #002117;
+  --color-on-secondary-fixed-variant: #00513f;
+
+  --color-tertiary: #85004d;
+  --color-tertiary-container: #b00068;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #ffc1d6;
+  --color-tertiary-fixed: #ffd9e4;
+  --color-tertiary-fixed-dim: #ffb0cc;
+  --color-on-tertiary-fixed: #3e0021;
+  --color-on-tertiary-fixed-variant: #8d0052;
+  --color-pink-brand: #e3238a;
+
+  --color-aqua-brand: #52f2cc;
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+
+  --color-background: #e5fff7;
+  --color-on-background: #071f1b;
+
+  --color-surface: #e5fff7;
+  --color-surface-dim: #c5e0d8;
+  --color-surface-bright: #e5fff7;
+  --color-on-surface: #071f1b;
+  --color-on-surface-variant: #3f4944;
+
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #def9f1;
+  --color-surface-container: #d9f4eb;
+  --color-surface-container-high: #d3eee6;
+  --color-surface-container-highest: #cee8e0;
+  --color-surface-variant: #cee8e0;
+
+  --color-inverse-surface: #1d352f;
+  --color-inverse-on-surface: #dcf7ee;
+
+  --color-outline: #6f7a74;
+  --color-outline-variant: #bec9c3;
+
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #ffffff;
     --foreground: #ededed;
   }
 }
