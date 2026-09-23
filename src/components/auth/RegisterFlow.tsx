@@ -9,12 +9,15 @@ import { StepIndicator } from "./StepIndicator";
 import { CreateAccountStep, type AccountDetails } from "./CreateAccountStep";
 import { ChooseProgramStep, type ProgramSelection } from "./ChooseProgramStep";
 import { ActivationStep } from "./ActivationStep";
+import { useRouter } from "next/navigation";
+
 
 export default function RegisterFlow() {
     const [step, setStep] = useState<1 | 2 | 3>(1);
     const [account, setAccount] = useState<AccountDetails | null>(null);
     const [selection, setSelection] = useState<ProgramSelection | null>(null);
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
 
     const handleAccountSubmit = async (values: AccountDetails) => {
         try {
@@ -62,13 +65,14 @@ export default function RegisterFlow() {
                             onBack={() => setStep(2)}
                             onFinish={() => {
                                 // Hook up wallet/member activation confirmation here.
+                                router.push('/dashboard')
                             }}
                         />
                     )}
                 </div>
             </main>
 
-            <AuthFooter />
+            {/* <AuthFooter /> */}
         </div>
     );
 }

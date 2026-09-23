@@ -5,6 +5,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { CustomButton } from "@/components/CustomButton";
 import { CustomInput } from "@/components/CustomInput";
+import Link from "next/link";
 
 export type AccountDetails = {
     firstName: string;
@@ -149,9 +150,9 @@ export function CreateAccountStep({
                         </div>
 
                         <div className="pt-2">
-                            <label className="flex items-start gap-3 cursor-pointer select-none">
+                            <label className="flex items-center gap-2 cursor-pointer select-none">
                                 <input
-                                    className="mt-1 w-5 h-5 text-primary-container rounded border-surface-container focus:ring-primary-container"
+                                    className="w-4 h-4 text-primary-container rounded border-surface-container focus:ring-primary-container checked:bg-primary"
                                     type="checkbox"
                                     checked={values.agreed}
                                     onChange={(e) => setFieldValue("agreed", e.target.checked)}
@@ -178,6 +179,18 @@ export function CreateAccountStep({
                     </Form>
                 )}
             </Formik>
+
+            <div className="mt-6 text-center">
+                <p className="font-body-md text-body-md text-on-surface-variant">
+                    Already have an account?{" "}
+                    <Link
+                        href="/login"
+                        className="font-medium text-secondary hover:text-primary transition-colors underline underline-offset-4 decoration-secondary/30 ml-1"
+                    >
+                        Login
+                    </Link>
+                </p>
+            </div>
         </div>
     );
 }

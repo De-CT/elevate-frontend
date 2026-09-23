@@ -1,4 +1,5 @@
 import React from "react";
+import { BrandSpinner } from "./BrandSpinner";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 type ButtonSize = "lg" | "md" | "sm";
@@ -59,14 +60,12 @@ const CustomButton = ({
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`${baseClasses} ${SIZE_CLASSES[size]} ${VARIANT_CLASSES[variant]} ${fullWidth ? "w-full" : ""
-        } ${className}`}
+      className={`${baseClasses} ${SIZE_CLASSES[size]} ${VARIANT_CLASSES[variant]} ${
+        fullWidth ? "w-full" : ""
+      } ${className}`}
     >
       {loading ? (
-        <span className="flex items-center gap-2">
-          <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-          {/* {loadingText && <span>{loadingText}</span>} */}
-        </span>
+        <BrandSpinner size="sm" className="text-current" label={loadingText} labelClassName="font-headline font-bold" />
       ) : (
         <>
           {leftIcon}

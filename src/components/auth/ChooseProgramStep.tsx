@@ -257,14 +257,14 @@ export function ChooseProgramStep({
         </div>
       </div>
 
-      <CustomButton
+      {/* <CustomButton
         text="Back to Account Details"
         variant="ghost"
         size="md"
         leftIcon={<ArrowLeft className="w-4 h-4" />}
         onClick={onBack}
         className="mt-6"
-      />
+      /> */}
     </div>
   );
 }
