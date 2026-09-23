@@ -72,11 +72,10 @@ export function FAQ() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                    {FAQS.map((faq, index) => (
+                    {FAQS.map((faq) => (
                         <details
                             key={faq.question}
                             className="group bg-surface-container-lowest rounded-2xl p-6 border border-surface-container transition-all [&_summary::-webkit-details-marker]:hidden"
-                            open={index === 0}
                         >
                             <summary className="flex items-center justify-between cursor-pointer list-none font-display text-base font-bold text-on-surface">
                                 {faq.question}
