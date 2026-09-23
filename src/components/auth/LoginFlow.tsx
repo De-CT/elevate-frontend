@@ -20,7 +20,7 @@ export default function LoginFlow() {
 
 
             <main className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center p-gutter-mobile md:p-gutter">
-                <div className="flex flex-col w-full items-center justify-center py-6 px-4">
+                <div className="flex flex-col w-full items-center justify-center py-6 px-2">
                     <div className="w-full max-w-md flex flex-col items-center">
                         <LoginBrandHeader />
 

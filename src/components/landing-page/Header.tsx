@@ -82,12 +82,13 @@ export function Header() {
           ))}
 
           <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-surface-container">
-            <button
+            <a
               onClick={() => setOpen(false)}
+              href="/register"
               className="w-full px-5 py-2.5 rounded-full font-sans text-sm font-semibold text-primary bg-surface-container hover:bg-surface-container-high transition-all"
             >
               Sign In
-            </button>
+            </a>
             <a
               href="/register"
               onClick={() => setOpen(false)}
