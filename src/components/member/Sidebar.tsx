@@ -30,8 +30,8 @@ const links = [
     { label: "Settings", href: "/settings", icon: Settings },
 ];
 
-export function Sidebar({collapsed, setCollapsed}) {
-   
+export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed: (value: boolean) => void }) {
+
 
     return (
         <aside
