@@ -44,6 +44,7 @@ export function ActivationStep({
   const weeklyAmount = Number(selectedPackage?.weeklyAmount ?? 0);
   const durationWeeks = selectedPackage?.durationWeeks ?? 0;
   const { user } = useUserStore()
+  const virtualAccount = user?.virtualAccount;
 
   if (!verification) {
     return (
@@ -57,8 +58,9 @@ export function ActivationStep({
 
 
   const handleCopy = async () => {
+    if (!virtualAccount?.accountNumber) return;
     try {
-      await navigator.clipboard.writeText(user?.virtualAccount.accountNumber);
+      await navigator.clipboard.writeText(virtualAccount.accountNumber);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -188,7 +190,7 @@ export function ActivationStep({
           <div>
             <span className="font-body text-xs text-on-surface-variant uppercase">Bank Name</span>
             <p className="font-headline font-bold text-base text-on-surface">
-              {user.virtualAccount.bankName}
+              {virtualAccount?.bankName ?? "Bank account unavailable"}
             </p>
           </div>
           <div>
@@ -196,7 +198,7 @@ export function ActivationStep({
               Account Name
             </span>
             <p className="font-headline font-bold text-base text-on-surface">
-              {user.virtualAccount.accountName}
+              {virtualAccount?.accountName ?? ""}
             </p>
           </div>
           <div>
@@ -205,13 +207,14 @@ export function ActivationStep({
             </span>
             <div className="flex items-center justify-between gap-3 mt-1 bg-surface-container-low p-3 rounded-xl">
               <span className="font-headline font-bold text-2xl sm:text-3xl text-primary tracking-widest font-mono">
-                {user.virtualAccount.accountNumber}
+                {virtualAccount?.accountNumber ?? ""}
               </span>
               <CustomButton
                 text={copied ? "Copied!" : "Copy"}
                 size="md"
                 leftIcon={<ClipboardCopy className="w-[18px] h-[18px]" />}
                 onClick={handleCopy}
+                disabled={!virtualAccount?.accountNumber}
               />
             </div>
           </div>

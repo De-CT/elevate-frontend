@@ -42,9 +42,10 @@ export function Header() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
-          <button className="px-5 py-2.5 rounded-full font-sans text-sm font-semibold text-primary bg-surface-container hover:bg-surface-container-high transition-all">
+          <a
+            href="/login" className="px-5 py-2.5 rounded-full font-sans text-sm font-semibold text-primary bg-surface-container hover:bg-surface-container-high transition-all">
             Sign In
-          </button>
+          </a>
           <a
             href="/register"
             className="px-6 py-2.5 rounded-full font-sans text-sm font-bold text-on-primary bg-primary hover:bg-primary-container shadow-md hover:shadow-lg transition-all"

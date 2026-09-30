@@ -9,4 +9,5 @@ export const ENDPOINTS = {
   subscribeToPackage: "/subscriptions",
   packageRegistrationPayment: "/registration-payment/claim",
   listPackages: "/packages",
+  listSubscriptions: "/subscriptions/me",
 };

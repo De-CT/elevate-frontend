@@ -1,9 +1,20 @@
-const Dashboard = () => {
-    return (
-        <div className="">
-            <h1 className="text-4xl text-center">Here is the dashboard</h1>
-        </div>
-    )
-}
+"use client"
+import { listSubscriptions } from "@/backend/user";
+import { MemberDashboard } from "@/components/member/dashboard/MemberDashboard";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
-export default Dashboard
+
+export default function DashboardPage() {
+    const fetchSubscriptions = async () => {
+        try {
+            const res = await listSubscriptions()
+        } catch (e: any) {
+            toast.error(e.message)
+        }
+    }
+    useEffect(() => {
+        fetchSubscriptions()
+    }, [])
+    return <MemberDashboard />;
+}

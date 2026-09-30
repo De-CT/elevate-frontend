@@ -43,3 +43,13 @@ export const subscribeToPackage = async (data: {
     throw new Error(e.response.data.message ?? e.message);
   }
 };
+
+export const listSubscriptions = async () => {
+  try {
+    const res = await api.get(`${ENDPOINTS.listSubscriptions}`);
+    console.log("subccribe", res.data);
+    return res.data;
+  } catch (e: any) {
+    throw new Error(e.response.data.message ?? e.message);
+  }
+};

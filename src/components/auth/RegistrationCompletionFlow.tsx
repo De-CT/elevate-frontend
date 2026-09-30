@@ -33,7 +33,7 @@ export function RegistrationCompletionFlow() {
             const packages = await listPackages();
             setActivePackages(packages);
 
-            if (savedDraft?.userId === user?.id) {
+            if (savedDraft && savedDraft.userId === user?.id) {
                 setSelection(savedDraft.selection);
             } else if (savedDraft) {
                 setRegistrationDraft(null);
