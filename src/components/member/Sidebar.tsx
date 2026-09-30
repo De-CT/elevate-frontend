@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
     LayoutDashboard,
     Wallet,
@@ -30,7 +30,7 @@ const links = [
     { label: "Settings", href: "/settings", icon: Settings },
 ];
 
-export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed: (value: boolean) => void }) {
+export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean;  setCollapsed: Dispatch<SetStateAction<boolean>> }) {
 
 
     return (

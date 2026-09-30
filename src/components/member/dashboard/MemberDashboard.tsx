@@ -40,7 +40,7 @@ type DashboardUser = UserProfile & {
 
 export function MemberDashboard() {
     const [drawerOpen, setDrawerOpen] = useState(false);
-     const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(false);
     const user = useUserStore((state) => state.user) as DashboardUser | null;
     const savingsPlans = user?.savingsPlans ?? [];
     const paymentSchedules = user?.paymentSchedules ?? [];
