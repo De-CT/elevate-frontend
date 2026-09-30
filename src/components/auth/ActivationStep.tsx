@@ -4,8 +4,10 @@ import { useState } from "react";
 import { ArrowRight, Building2, Check, CheckCircle2, ClipboardCopy } from "lucide-react";
 import { CustomButton } from "@/components/CustomButton";
 import type { ProgramSelection } from "./ChooseProgramStep";
+import { BvnVerificationStep, type BvnVerificationResult } from "./BVNverificationStep";
+import { useAppStore } from "@/store/useAppStore";
+import { useUserStore } from "@/store/useUserStore";
 
-const PINNACLE_REG_FEE = 3000;
 const naira = (n: number) => `₦${n.toLocaleString("en-NG")}`;
 
 type BankDetails = {
@@ -33,16 +35,30 @@ export function ActivationStep({
 }) {
   const [success, setSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [verification, setVerification] = useState<BvnVerificationResult | null>(null);
+  const selectedPackage = useAppStore((state) =>
+    state.activePackages?.find((packageData) => packageData.type === selection.packageType)
+  );
+  const packageName = selectedPackage?.name ?? selection.packageType.replace("_", " ");
+  const registrationFee = Number(selectedPackage?.registrationFee ?? 0);
+  const weeklyAmount = Number(selectedPackage?.weeklyAmount ?? 0);
+  const durationWeeks = selectedPackage?.durationWeeks ?? 0;
+  const { user } = useUserStore()
 
-  const resolvedBank: BankDetails = bank ?? {
-    bankName: "Providus Bank",
-    accountName: `Elevate Heart / ${accountName}`,
-    accountNumber: "9901847291",
-  };
+  if (!verification) {
+    return (
+      <BvnVerificationStep
+        selection={selection}
+        onBack={onBack}
+        onVerified={setVerification}
+      />
+    );
+  }
+
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(resolvedBank.accountNumber);
+      await navigator.clipboard.writeText(user?.virtualAccount.accountNumber);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -75,7 +91,9 @@ export function ActivationStep({
     );
   }
 
-  if (selection.program === "chop-beta") {
+  if (selection.packageType === "CHOP_BETA") {
+    const totalWeeklyAmount = selection.quantity * weeklyAmount;
+
     return (
       <div className="w-full max-w-xl bg-surface-container-lowest rounded-2xl border-2 border-surface-container shadow-sm p-6 sm:p-10">
         <div className="mb-6 text-center sm:text-left">
@@ -83,11 +101,12 @@ export function ActivationStep({
             <Check className="w-6 h-6" />
           </div>
           <h2 className="font-headline font-bold text-2xl sm:text-3xl text-primary">
-            Chop Beta is Ready!
+            {packageName} is Ready!
           </h2>
           <p className="font-body text-base text-on-surface-variant mt-2 leading-relaxed">
-            No registration fee needed to start Chop Beta. You can make your first weekly
-            contribution from your wallet.
+            {registrationFee === 0
+              ? `No registration fee is needed to start ${packageName}.`
+              : `A registration fee of ${naira(registrationFee * selection.quantity)} is required to start ${packageName}.`} {`You can make your weekly contribution of ${naira(totalWeeklyAmount)} from your wallet over ${durationWeeks} weeks.`}
           </p>
         </div>
 
@@ -95,12 +114,20 @@ export function ActivationStep({
           <div className="flex justify-between items-center">
             <span className="font-body text-on-surface-variant text-sm">Selected Program:</span>
             <span className="font-headline font-bold text-primary text-base">
-              Chop Beta Foodstuff
+              {packageName} ({selection.quantity} {selection.quantity === 1 ? "account" : "accounts"})
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="font-body text-on-surface-variant text-sm">Weekly contribution:</span>
+            <span className="font-headline font-bold text-primary text-base">
+              {naira(totalWeeklyAmount)} for {durationWeeks} weeks
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="font-body text-on-surface-variant text-sm">Setup Fee:</span>
-            <span className="font-headline font-bold text-secondary-accent text-lg">₦0 FREE</span>
+            <span className="font-headline font-bold text-secondary-accent text-lg">
+              {registrationFee === 0 ? "₦0 FREE" : naira(registrationFee * selection.quantity)}
+            </span>
           </div>
         </div>
 
@@ -117,13 +144,14 @@ export function ActivationStep({
     );
   }
 
-  const totalFee = selection.quantity * PINNACLE_REG_FEE;
+  const totalFee = selection.quantity * registrationFee;
+  const accountLabel = selection.quantity > 1 ? "accounts" : "account";
 
   return (
     <div className="w-full max-w-xl bg-surface-container-lowest rounded-2xl border-2 border-surface-container shadow-sm p-6 sm:p-10">
       <div className="mb-6">
         <h2 className="font-headline font-bold text-2xl sm:text-3xl text-primary">
-          Pinnacle Registration
+          {packageName} Registration
         </h2>
         <p className="font-body text-base text-on-surface-variant mt-2">
           To start your Pinnacle plan, pay the one-time registration fee of {naira(totalFee)}.
@@ -132,15 +160,14 @@ export function ActivationStep({
 
       <div className="bg-surface-container-low rounded-xl p-4 sm:p-5 mb-6 space-y-2.5">
         <div className="flex justify-between items-center text-sm sm:text-base">
-          <span className="font-body text-on-surface-variant">Selected Batch:</span>
           <span className="font-headline font-bold text-primary">
-            Pinnacle ({selection.quantity} Accounts • {batchCode})
+            {packageName} ({selection.quantity} {accountLabel})
           </span>
         </div>
         <div className="flex justify-between items-center text-sm sm:text-base">
           <span className="font-body text-on-surface-variant">Fee calculation:</span>
           <span className="font-body font-medium text-on-surface">
-            {selection.quantity} accounts × {naira(PINNACLE_REG_FEE)}
+            {selection.quantity} {accountLabel} × {naira(registrationFee)}
           </span>
         </div>
         <div className="h-px bg-surface-container" />
@@ -161,7 +188,7 @@ export function ActivationStep({
           <div>
             <span className="font-body text-xs text-on-surface-variant uppercase">Bank Name</span>
             <p className="font-headline font-bold text-base text-on-surface">
-              {resolvedBank.bankName}
+              {user.virtualAccount.bankName}
             </p>
           </div>
           <div>
@@ -169,7 +196,7 @@ export function ActivationStep({
               Account Name
             </span>
             <p className="font-headline font-bold text-base text-on-surface">
-              {resolvedBank.accountName}
+              {user.virtualAccount.accountName}
             </p>
           </div>
           <div>
@@ -178,7 +205,7 @@ export function ActivationStep({
             </span>
             <div className="flex items-center justify-between gap-3 mt-1 bg-surface-container-low p-3 rounded-xl">
               <span className="font-headline font-bold text-2xl sm:text-3xl text-primary tracking-widest font-mono">
-                {resolvedBank.accountNumber}
+                {user.virtualAccount.accountNumber}
               </span>
               <CustomButton
                 text={copied ? "Copied!" : "Copy"}
@@ -197,7 +224,7 @@ export function ActivationStep({
           fullWidth
           onClick={handleFinish}
         />
-        <CustomButton text="Change Program" variant="ghost" size="md" fullWidth onClick={onBack} />
+        {/* <CustomButton text="Change Program" variant="ghost" size="md" fullWidth onClick={onBack} /> */}
       </div>
     </div>
   );

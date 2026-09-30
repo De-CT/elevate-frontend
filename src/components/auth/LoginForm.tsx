@@ -7,6 +7,9 @@ import { CustomButton } from "@/components/CustomButton";
 import { CustomInput } from "@/components/CustomInput";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { getProfile } from "@/backend/user";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useUserStore } from "@/store/useUserStore";
 
 type LoginValues = { phone: string; pin: string };
 
@@ -35,13 +38,18 @@ function NigeriaFlag() {
 
 export function LoginForm() {
     const router = useRouter();
+    const setAuthToken = useAuthStore((state) => state.setAuthToken);
+    const setUser = useUserStore((state) => state.setUser);
     const handleSubmit = async (values: typeof initialValues) => {
         try {
-            await login({ identifier: values.phone, password: values.pin });
-            toast.success("Login Successful")
-            router.push("/dashboard");
-        } catch (e: any) {
-            toast.error(e.message);
+            const tokens = await login({ identifier: values.phone, password: values.pin });
+            setAuthToken(tokens);
+            const profile = await getProfile();
+            setUser(profile);
+            toast.success("Login Successful");
+            router.push(profile.kycStatus === "VERIFIED" ? "/dashboard" : "/complete-registration");
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : "Unable to log in.");
         }
     }
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ToastHost } from "@/components/ToastHost";
+import { AuthSessionListener } from "@/components/AuthSessionListener";
 import "./globals.css";
 
 const genova = localFont({
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${genova.variable} ${manifest.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <AuthSessionListener />
         {children}
         <ToastHost />
       </body>

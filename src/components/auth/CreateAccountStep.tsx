@@ -35,8 +35,8 @@ const validationSchema = Yup.object({
         .matches(/^[0-9]{10,11}$/, "Enter a valid phone number")
         .required("Phone number is required"),
     password: Yup.string()
-        .matches(/^[0-9]{4}$/, "PIN must be exactly 6 digits")
-        .required("Create a 6-digit PIN"),
+        .matches(/^[0-9]{4}$/, "PIN must be exactly 4 digits")
+        .required("Create a 4-digit PIN"),
     confirmPassword: Yup.string()
         .oneOf([Yup.ref("password")], "The two PINs do not match")
         .required("Re-enter your PIN"),
@@ -123,7 +123,7 @@ export function CreateAccountStep({
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <CustomInput
                                 label="Create a 4-Digit PIN"
-                                placeholder="••••••"
+                                placeholder="••••"
                                 type="password"
                                 required
                                 variant="pin"
@@ -136,7 +136,7 @@ export function CreateAccountStep({
                             />
                             <CustomInput
                                 label="Enter PIN again"
-                                placeholder="••••••"
+                                placeholder="••••"
                                 type="password"
                                 required
                                 variant="pin"

@@ -1,10 +1,10 @@
 import { ENDPOINTS } from "@/constants/endpoints";
 import { api } from ".";
-import { LoginData, RegisterData } from "../../interface";
 
-export const createAccount = async (data: RegisterData) => {
+export const getProfile = async () => {
   try {
-    const res = await api.post(`${ENDPOINTS.register}`, data);
+    const res = await api.get(`${ENDPOINTS.profile}`);
+    console.log("res", res.data);
     return res.data;
   } catch (e: any) {
     console.log("error", e.message);
@@ -21,18 +21,23 @@ export const bvnVerify = async (data: { bvn: string }) => {
   }
 };
 
-export const login = async (data: LoginData) => {
+export const listPackages = async () => {
   try {
-    const res = await api.post(`${ENDPOINTS.login}`, data);
+    const res = await api.get(`${ENDPOINTS.listPackages}`);
+    console.log("packages", res.data);
     return res.data;
   } catch (e: any) {
     throw new Error(e.response.data.message ?? e.message);
   }
 };
 
-export const refreshToken = async (data: { refreshToken: string }) => {
+export const subscribeToPackage = async (data: {
+  packageType: string;
+  quantity: number;
+}) => {
   try {
-    const res = await api.post(`${ENDPOINTS.refresh}`, data);
+    const res = await api.post(`${ENDPOINTS.subscribeToPackage}`, data);
+    console.log("subccribe", res.data);
     return res.data;
   } catch (e: any) {
     throw new Error(e.response.data.message ?? e.message);

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrandSpinner } from "./BrandSpinner";
+import { LoaderCircle } from "lucide-react";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 type ButtonSize = "lg" | "md" | "sm";
@@ -65,7 +65,10 @@ const CustomButton = ({
       } ${className}`}
     >
       {loading ? (
-        <BrandSpinner size="sm" className="text-current" label={loadingText} labelClassName="font-headline font-bold" />
+        <span className="inline-flex items-center gap-2" role="status" aria-live="polite">
+          <LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" />
+          <span>{loadingText}</span>
+        </span>
       ) : (
         <>
           {leftIcon}

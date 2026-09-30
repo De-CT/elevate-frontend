@@ -1,3 +1,4 @@
+import { BrandSpinner } from "@/components/BrandSpinner";
 import {
   Star,
   CalendarCheck,
@@ -9,6 +10,7 @@ import {
   ArrowRight,
   type LucideIcon,
 } from "lucide-react";
+import type { Package } from "@/store/useAppStore";
 
 type ProgramFeature = {
   icon: LucideIcon;
@@ -19,6 +21,7 @@ type ProgramFeature = {
 };
 
 type Program = {
+  id: string;
   eyebrow: string;
   name: string;
   subtitle: string;
@@ -36,13 +39,20 @@ type Program = {
   ctaLabel: string;
 };
 
-const PROGRAMS: Program[] = [
-  {
+const naira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
+
+function toProgram(packageData: Package): Program | null {
+  const weeklyAmount = Number(packageData.weeklyAmount);
+  const registrationFee = Number(packageData.registrationFee);
+  const referralBonus = Number(packageData.referralBonus);
+  const clearanceFee = Number(packageData.clearanceFee);
+  const totalContribution = weeklyAmount * packageData.durationWeeks;
+  const durationMonths = packageData.durationWeeks / 4;
+  const isPinnacle = packageData.type === "PINNACLE";
+
+  const presentation = isPinnacle
+    ? {
     eyebrow: "Structured Sprint",
-    name: "PINNACLE",
-    subtitle: "12-Week Member Contribution Journey",
-    duration: "12",
-    durationUnit: "Weeks",
     accentBar: "bg-secondary-brand",
     nameColor: "text-primary",
     badgeColor: "text-primary",
@@ -50,11 +60,6 @@ const PROGRAMS: Program[] = [
     ctaHoverBg: "hover:bg-primary-container",
     ctaText: "text-on-primary",
     linkColor: "text-primary",
-    highlights: [
-      { label: "Registration Fee", value: "₦3,000" },
-      { label: "Weekly Contribution", value: "₦5,000", valueColor: "text-primary" },
-      { label: "Total Contribution", value: "₦60,000" },
-    ],
     features: [
       {
         icon: Star,
@@ -62,7 +67,7 @@ const PROGRAMS: Program[] = [
         iconColor: "text-tertiary",
         title: "Referral Opportunity & Incentive",
         description:
-          "One referral opportunity per savings account after 4 weeks. Earns a ₦20,000 referral incentive when successfully qualified.",
+          `One referral opportunity per savings account after 4 weeks. Earns a ${naira(referralBonus)} referral incentive when successfully qualified.`,
       },
       {
         icon: CalendarCheck,
@@ -70,7 +75,7 @@ const PROGRAMS: Program[] = [
         iconColor: "text-on-secondary-fixed",
         title: "Transparent Maturity Process",
         description:
-          "An administrative clearance applies upon completion of Week 12. Terms confirmed at signup. Payout processed directly from your savings account.",
+          `An administrative clearance of ${naira(clearanceFee)} applies upon completion of Week ${packageData.durationWeeks}. Payout is processed directly from your savings account.`,
       },
       {
         icon: ShieldCheck,
@@ -82,13 +87,10 @@ const PROGRAMS: Program[] = [
       },
     ],
     ctaLabel: "Start Pinnacle Journey",
-  },
-  {
+    }
+    : packageData.type === "CHOP_BETA"
+      ? {
     eyebrow: "Household Security",
-    name: "CHOP BETA",
-    subtitle: "5-Month Foodstuff Package Journey",
-    duration: "5",
-    durationUnit: "Months",
     accentBar: "bg-tertiary",
     nameColor: "text-tertiary",
     badgeColor: "text-tertiary",
@@ -96,11 +98,6 @@ const PROGRAMS: Program[] = [
     ctaHoverBg: "hover:bg-tertiary-container",
     ctaText: "text-on-tertiary",
     linkColor: "text-tertiary",
-    highlights: [
-      { label: "Registration Fee", value: "No Fee", valueColor: "text-secondary-brand" },
-      { label: "Monthly Contribution", value: "₦30,000", valueColor: "text-tertiary", suffix: "/ hand" },
-      { label: "Total Contribution", value: "₦150,000", suffix: "/ hand" },
-    ],
     features: [
       {
         icon: UtensilsCrossed,
@@ -108,7 +105,7 @@ const PROGRAMS: Program[] = [
         iconColor: "text-on-secondary-fixed",
         title: "Nutritional Foodstuff Benefit",
         description:
-          "5 months duration, ₦30,000 per hand per month, foodstuff benefit upon completion: staple nutritional goods including 50kg rice, vegetable oil, beans, and essentials (not cash).",
+          `${packageData.durationWeeks} weeks duration, ${naira(weeklyAmount)} per week, with a foodstuff benefit upon completion: staple nutritional goods including 50kg rice, vegetable oil, beans, and essentials (not cash).`,
       },
       {
         icon: Users,
@@ -124,12 +121,38 @@ const PROGRAMS: Program[] = [
         iconColor: "text-on-surface-variant",
         title: "Default Terms & Non-Withdrawal",
         description:
-          "A default fee applies to missed monthly payments — full terms are confirmed at signup. Contributions are strictly non-withdrawable prior to maturity; an administrative clearance applies prior to benefit distribution.",
+          `A default fee applies to missed weekly payments. Contributions are non-withdrawable prior to maturity; a ${naira(clearanceFee)} administrative clearance applies prior to benefit distribution.`,
       },
     ],
     ctaLabel: "Join Chop Beta",
-  },
-];
+      }
+      : null;
+
+  if (!presentation) return null;
+
+  return {
+    id: packageData.id,
+    name: packageData.name.toUpperCase(),
+    subtitle: `${packageData.durationWeeks}-Week Member Contribution Journey`,
+    duration: String(packageData.durationWeeks),
+    durationUnit: "Weeks",
+    highlights: [
+      {
+        label: "Registration Fee",
+        value: registrationFee ? naira(registrationFee) : "No Fee",
+        valueColor: registrationFee ? undefined : "text-secondary-brand",
+      },
+      {
+        label: "Weekly Contribution",
+        value: naira(weeklyAmount),
+        valueColor: isPinnacle ? "text-primary" : "text-tertiary",
+      },
+      { label: "Total Contribution", value: naira(totalContribution) },
+      { label: "Clearance Fee", value: clearanceFee ? naira(clearanceFee) : "No Fee" },
+    ],
+    ...presentation,
+  };
+}
 
 function ProgramCard({ program }: { program: Program }) {
   return (
@@ -187,7 +210,7 @@ function ProgramCard({ program }: { program: Program }) {
 
       <div className="pt-4 flex flex-col gap-3">
         <a
-          href="#programs"
+          href={`/register?packageId=${encodeURIComponent(program.id)}`}
           className={`w-full py-3.5 rounded-full ${program.ctaBg} ${program.ctaText} font-sans text-sm text-center font-bold shadow-md ${program.ctaHoverBg} transition-all`}
         >
           {program.ctaLabel}
@@ -203,7 +226,12 @@ function ProgramCard({ program }: { program: Program }) {
   );
 }
 
-export function Programs() {
+export function Programs({ activePackages }: { activePackages: Package[] | null }) {
+  const programs = activePackages?.filter((packageData) => packageData.isActive).flatMap((packageData) => {
+    const program = toProgram(packageData);
+    return program ? [program] : [];
+  });
+
   return (
     <section id="programs" className="w-full max-w-7xl mx-auto px-4 md:px-8 py-20 flex flex-col gap-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -226,9 +254,17 @@ export function Programs() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {PROGRAMS.map((program) => (
+        {programs?.map((program) => (
           <ProgramCard key={program.name} program={program} />
         ))}
+        {activePackages === null && (
+          <div className="col-span-full flex min-h-48 items-center justify-center" aria-busy="true">
+            <BrandSpinner label="Loading programs..." />
+          </div>
+        )}
+        {activePackages !== null && programs?.length === 0 && (
+          <p className="text-on-surface-variant">No programs are currently available.</p>
+        )}
       </div>
 
       <div className="flex justify-center pt-4">

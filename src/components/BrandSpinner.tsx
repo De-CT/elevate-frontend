@@ -32,13 +32,13 @@ export function BrandSpinner({
     labelClassName = "font-label-lg text-label-lg",
 }: BrandSpinnerProps) {
     const px = typeof size === "number" ? size : SIZE_PRESETS[size];
-    const strokeWidth = px < 24 ? 3 : px < 40 ? 2.5 : 2;
+    const strokeWidth = 2;
     const showMark = px >= 24 && Boolean(markSrc);
-    const markPadding = px >= 40 ? "p-2.5" : px >= 24 ? "p-1.5" : "p-0.5";
+    const markSize = px * 0.56;
     const dotSize = Math.max(Math.round(px * 0.3), 6);
 
     return (
-        <span className="inline-flex items-center gap-2" role="status" aria-live="polite">
+        <span className="inline-flex flex-col items-center gap-2" role="status" aria-live="polite">
             <span
                 className={`relative inline-flex items-center justify-center shrink-0 ${className}`}
                 style={{ width: px, height: px }}
@@ -54,16 +54,22 @@ export function BrandSpinner({
                     />
                     <path
                         className="opacity-90"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        fill="currentColor"
+                                            d="M12 2a10 10 0 0110 10"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth={strokeWidth}
+                                            strokeLinecap="round"
                     />
                 </svg>
 
                 <span className="absolute inset-0 flex items-center justify-center">
                     {showMark ? (
-                        <span className={`w-full h-full ${markPadding}`}>
+                        <span
+                            className="relative block shrink-0"
+                            style={{ width: markSize, height: markSize }}
+                        >
                             <Image
-                                src={emblemPng}
+                                src={markSrc ?? emblemPng}
                                 alt={markAlt}
                                 className="w-full h-full object-contain"
                                 width={px}
