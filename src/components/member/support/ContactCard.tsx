@@ -6,7 +6,7 @@ type Props = {
   description: string;
   actionLabel: string;
   href: string;
-  icon: "phone" | "mail";
+  icon?: "phone" | "mail";
 };
 
 export default function ContactCard({
