@@ -53,3 +53,23 @@ export const listSubscriptions = async () => {
     throw new Error(e.response.data.message ?? e.message);
   }
 };
+
+export const getWallet = async () => {
+  try {
+    const res = await api.get(`${ENDPOINTS.wallet}`);
+    console.log("wallet", res.data);
+    return res.data;
+  } catch (e: any) {
+    throw new Error(e.response.data.message ?? e.message);
+  }
+};
+
+export const getWalletHistory = async () => {
+  try {
+    const res = await api.get(`${ENDPOINTS.walletHistory}`);
+    console.log("wallet history", res.data);
+    return res.data;
+  } catch (e: any) {
+    throw new Error(e.response.data.message ?? e.message);
+  }
+};

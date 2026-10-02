@@ -20,7 +20,7 @@ const LEGAL_LINKS = ["Privacy Policy", "Terms of Service", "Community Guidelines
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#00382b] text-on-primary py-16 px-4 md:px-8">
+    <footer className="w-full bg-primary text-on-primary py-16 px-4 md:px-8">
       <div className="w-full max-w-7xl mx-auto flex flex-col gap-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-4 flex flex-col gap-4">

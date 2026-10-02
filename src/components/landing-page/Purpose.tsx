@@ -29,7 +29,7 @@ const PILLARS: { icon: LucideIcon; title: string; description: string }[] = [
 
 export function Purpose() {
   return (
-    <section className="w-full bg-primary-dark text-on-primary py-16 px-4 md:px-8 relative overflow-hidden">
+    <section className="w-full bg-primary text-on-primary py-16 px-4 md:px-8 relative overflow-hidden">
       <div className="w-full max-w-7xl mx-auto flex flex-col gap-10">
         <div className="max-w-3xl">
           <span className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-aqua-brand">

@@ -27,17 +27,17 @@ export function SavingsSection({ plans }: { plans: SavingsPlan[] }) {
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <h2 className="text-xl font-bold text-[#004D3A] sm:text-2xl">
+          <h2 className="font-headline text-xl font-bold text-primary sm:text-2xl">
             My Savings
           </h2>
-          <span className="rounded-full bg-[#69F7CD] px-2.5 py-1 text-xs font-bold text-[#00513F]">
+          <span className="rounded-full bg-secondary-container px-2.5 py-1 font-label-xs text-xs font-bold text-on-secondary-fixed-variant">
             {activeCount} active
           </span>
         </div>
 
         <Link
           href="/savings"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-[#006B54] hover:underline"
+          className="inline-flex items-center gap-1 font-label-md text-sm font-semibold text-secondary hover:underline"
         >
           Details
           <ChevronRight className="h-4 w-4" />
@@ -45,17 +45,17 @@ export function SavingsSection({ plans }: { plans: SavingsPlan[] }) {
       </div>
 
       {plans.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-[#D3EEE6] bg-white px-6 py-10 text-center sm:py-12">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#E5FFF7] text-[#004D3A]">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-surface-container-high bg-surface-container-lowest px-6 py-10 text-center sm:py-12">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface text-primary">
             <HandCoins className="h-8 w-8" aria-hidden="true" />
           </div>
-          <h3 className="text-lg font-bold text-[#004D3A]">You have no savings yet</h3>
-          <p className="mt-1 max-w-md text-sm leading-relaxed text-[#6F7A74]">
+          <h3 className="font-headline text-lg font-bold text-primary">You have no savings yet</h3>
+          <p className="mt-1 max-w-md font-body text-sm leading-relaxed text-outline">
             Choose a program to start saving towards your goals.
           </p>
           <Link
             href="#"
-            className="mt-6 inline-flex h-12 items-center gap-2 rounded-full bg-[#004D3A] px-6 text-sm font-semibold text-white hover:bg-[#00674F]"
+            className="mt-6 inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 font-label-md text-sm font-semibold text-on-primary hover:bg-primary-container"
           >
             <Plus className="h-5 w-5" aria-hidden="true" />
             Choose a Program
@@ -70,7 +70,7 @@ export function SavingsSection({ plans }: { plans: SavingsPlan[] }) {
           </div>
           <Link
             href="/packages"
-            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#A0F3D4] bg-[#DEF9F1] px-4 py-3 text-sm font-bold text-[#004D3A] transition hover:bg-[#CEE8E0]"
+            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-primary-fixed bg-surface-container-low px-4 py-3 font-label-md text-sm font-bold text-primary transition hover:bg-surface-container-highest"
           >
             <Plus className="h-5 w-5" />
             Start Another Savings

@@ -3,28 +3,29 @@ import { Bell, Menu } from "lucide-react";
 
 type Props = {
   member: { firstName: string };
+  title?: string;
   onMenuClick: () => void;
 };
 
-export function Header({ member, onMenuClick }: Props) {
+export function Header({ member, title = "Dashboard", onMenuClick }: Props) {
   return (
-    <header className="sticky top-0 z-30 border-b border-[#D3EEE6] bg-[#E5FFF7]/90 shadow-[0_1px_6px_rgba(0,0,0,0.02)] backdrop-blur-xl">
+    <header className="sticky top-0 z-30 border-b border-surface-container-high bg-surface/90 shadow-[0_1px_6px_rgba(0,0,0,0.02)] backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:h-[72px] lg:px-8">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={onMenuClick}
             aria-label="Open navigation"
-            className="rounded-xl bg-white p-2.5 text-[#004D3A] shadow-sm lg:hidden"
+            className="rounded-xl bg-surface-container-lowest p-2.5 text-primary shadow-sm lg:hidden"
           >
             <Menu className="h-6 w-6" />
           </button>
 
-          <span className="hidden text-xl font-bold text-[#004D3A] lg:block">
-            Dashboard
+          <span className="hidden font-headline text-xl font-bold text-primary lg:block">
+            {title}
           </span>
 
-          <span className="font-semibold text-[#004D3A] lg:hidden">
+          <span className="font-headline font-semibold text-primary lg:hidden">
             Elevate Heart
           </span>
         </div>
@@ -33,17 +34,17 @@ export function Header({ member, onMenuClick }: Props) {
           <button
             type="button"
             aria-label="Notifications"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#004D3A] shadow-sm hover:bg-[#D9F4EB]"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-lowest text-primary shadow-sm hover:bg-surface-container"
           >
             <Bell className="h-[22px] w-[22px]" />
-            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-[#85004D] ring-2 ring-[#E5FFF7]" />
+            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-tertiary ring-2 ring-surface" />
           </button>
 
-          <div className="flex items-center gap-2.5 border-l border-[#D3EEE6] pl-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#00674F] text-sm font-bold text-white sm:h-10 sm:w-10">
+          <div className="flex items-center gap-2.5 border-l border-surface-container-high pl-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-container text-sm font-bold text-on-primary sm:h-10 sm:w-10">
               {member.firstName.charAt(0)}
             </div>
-            <span className="text-sm font-bold text-[#004D3A]">
+            <span className="font-label-md text-sm font-bold text-primary">
               {member.firstName}
             </span>
           </div>

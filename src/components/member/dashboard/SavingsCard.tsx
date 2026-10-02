@@ -36,26 +36,26 @@ export function SavingsCard({ plan }: { plan: SavingsPlan }) {
   const Icon = isChopBeta ? ShoppingBasket : Store;
 
   return (
-    <article className="flex flex-col justify-between gap-4 rounded-2xl border border-[#D3EEE6]/70 bg-white p-5 shadow-[0_4px_16px_-2px_rgba(0,77,58,0.06)]">
+    <article className="flex flex-col justify-between gap-4 rounded-2xl border border-surface-container-high/70 bg-surface-container-lowest p-5 shadow-[0_4px_16px_-2px_rgba(0,77,58,0.06)]">
       <div>
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <div
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                 isChopBeta
-                  ? "bg-[#D9F4EB] text-[#00674F]"
-                  : "bg-[#A0F3D4] text-[#004D3A]"
+                  ? "bg-surface-container text-primary-container"
+                  : "bg-primary-fixed text-primary"
               }`}
             >
               <Icon className="h-[22px] w-[22px]" />
             </div>
 
             <div className="min-w-0">
-              <h3 className="font-bold text-[#071F1B]">
+              <h3 className="font-headline font-bold text-on-surface">
                 {plan.packageName} — {plan.hands}{" "}
                 {plan.hands === 1 ? "Hand" : "Hands"}
               </h3>
-              <p className="mt-0.5 text-xs text-[#6F7A74]">
+              <p className="mt-0.5 font-body text-xs text-outline">
                 {plan.handsOnTrack} on track
                 {plan.handsNeedingAttention > 0 &&
                   `, ${plan.handsNeedingAttention} need attention`}
@@ -63,7 +63,7 @@ export function SavingsCard({ plan }: { plan: SavingsPlan }) {
             </div>
           </div>
 
-          <span className="shrink-0 rounded-full bg-[#D9F4EB] px-2.5 py-1 text-[11px] font-bold text-[#00513F]">
+          <span className="shrink-0 rounded-full bg-surface-container px-2.5 py-1 font-label-xs text-[11px] font-bold text-on-secondary-fixed-variant">
             {plan.status}
           </span>
         </div>
@@ -71,24 +71,24 @@ export function SavingsCard({ plan }: { plan: SavingsPlan }) {
         <div className="mt-5">
           <div className="mb-2 flex flex-wrap items-end justify-between gap-2">
             <div>
-              <p className="mb-1 text-xs font-medium text-[#6F7A74]">
+              <p className="mb-1 font-label-xs text-xs font-medium text-outline">
                 Money Saved
               </p>
-              <p className="text-xl font-bold text-[#004D3A]">
+              <p className="font-currency-card text-xl font-bold text-primary">
                 {naira(plan.saved)}
-                <span className="ml-1 text-sm font-normal text-[#6F7A74]">
+                <span className="ml-1 text-sm font-normal text-outline">
                   / {naira(plan.target)}
                 </span>
               </p>
             </div>
 
-            <span className="text-xs font-bold text-[#006B54]">
+            <span className="font-label-xs text-xs font-bold text-secondary">
               {plan.currentPeriod} of {plan.totalPeriods} {plan.periodLabel}
             </span>
           </div>
 
           <div
-            className="h-2.5 w-full overflow-hidden rounded-full bg-[#CEE8E0]"
+            className="h-2.5 w-full overflow-hidden rounded-full bg-surface-container-highest"
             role="progressbar"
             aria-label={`${plan.packageName} savings progress`}
             aria-valuenow={Math.round(progress)}
@@ -96,32 +96,32 @@ export function SavingsCard({ plan }: { plan: SavingsPlan }) {
             aria-valuemax={100}
           >
             <div
-              className="h-full rounded-full bg-[#16BE97] transition-all"
+              className="h-full rounded-full bg-secondary-accent transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-[#D3EEE6] pt-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-2 text-xs text-[#3F4944]">
+      <div className="flex flex-col gap-3 border-t border-surface-container-high pt-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-2 font-body text-xs text-on-surface-variant">
           {isChopBeta ? (
-            <ShoppingBasket className="mt-0.5 h-4 w-4 shrink-0 text-[#006B54]" />
+            <ShoppingBasket className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
           ) : (
-            <CalendarClock className="mt-0.5 h-4 w-4 shrink-0 text-[#006B54]" />
+            <CalendarClock className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
           )}
           <span>
             Next auto-pay:{" "}
-            <strong className="text-[#071F1B]">
+            <strong className="font-currency-card text-on-surface">
               {naira(plan.nextPayment)}/{plan.paymentFrequency}
             </strong>
-            <span className="block text-[#6F7A74]">{plan.benefitLabel}</span>
+            <span className="block text-outline">{plan.benefitLabel}</span>
           </span>
         </div>
 
         <Link
           href={`/savings/${plan.id}`}
-          className="inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-full bg-[#E5FFF7] px-4 text-xs font-bold text-[#004D3A] hover:bg-[#D9F4EB]"
+          className="inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-full bg-surface px-4 font-label-xs text-xs font-bold text-primary hover:bg-surface-container"
         >
           View Savings
           <ArrowRight className="h-3.5 w-3.5" />

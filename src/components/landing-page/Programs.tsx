@@ -95,7 +95,7 @@ function toProgram(packageData: Package): Program | null {
     nameColor: "text-tertiary",
     badgeColor: "text-tertiary",
     ctaBg: "bg-tertiary",
-    ctaHoverBg: "hover:bg-tertiary-container",
+    ctaHoverBg: "hover:bg-deep-magenta-brand",
     ctaText: "text-on-tertiary",
     linkColor: "text-tertiary",
     features: [

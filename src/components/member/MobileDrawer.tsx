@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Wallet,
@@ -34,6 +35,8 @@ type Props = {
 };
 
 export function MobileDrawer({ open, onClose, memberName = "Member" }: Props) {
+  const pathname = usePathname();
+
   return (
     <div
       className={`fixed inset-0 z-50 lg:hidden ${
@@ -45,22 +48,22 @@ export function MobileDrawer({ open, onClose, memberName = "Member" }: Props) {
         type="button"
         aria-label="Close navigation"
         onClick={onClose}
-        className={`absolute inset-0 bg-[#004D3A]/40 backdrop-blur-sm transition-opacity ${
+        className={`absolute inset-0 bg-primary/40 backdrop-blur-sm transition-opacity ${
           open ? "opacity-100" : "opacity-0"
         }`}
       />
 
       <aside
-        className={`absolute bottom-0 left-0 top-0 flex w-72 max-w-[85vw] flex-col justify-between bg-white shadow-2xl transition-transform duration-300 ${
+        className={`absolute bottom-0 left-0 top-0 flex w-72 max-w-[85vw] flex-col justify-between bg-surface-container-lowest shadow-2xl transition-transform duration-300 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div>
-          <div className="flex h-16 items-center justify-between border-b border-[#D3EEE6] px-5">
+          <div className="flex h-16 items-center justify-between border-b border-surface-container-high px-5">
             <Link
               href="/dashboard"
               onClick={onClose}
-              className="font-semibold text-[#004D3A]"
+              className="font-semibold text-primary"
             >
           <Image
             src={logo}
@@ -76,7 +79,7 @@ export function MobileDrawer({ open, onClose, memberName = "Member" }: Props) {
               type="button"
               aria-label="Close menu"
               onClick={onClose}
-              className="rounded-full bg-[#E5FFF7] p-2 text-[#004D3A]"
+              className="rounded-full bg-surface p-2 text-primary"
             >
               <X className="h-5 w-5" />
             </button>
@@ -84,34 +87,35 @@ export function MobileDrawer({ open, onClose, memberName = "Member" }: Props) {
 
           <nav className="space-y-1.5 overflow-y-auto p-4">
             {links.map(({ label, href, icon: Icon, dot }) => {
-              const active = label === "Dashboard";
+              const active = pathname === href || pathname.startsWith(`${href}/`);
 
               return (
                 <Link
                   key={label}
                   href={href}
                   onClick={onClose}
-                  className={`flex items-center gap-3.5 rounded-xl px-3.5 py-3 text-sm ${
+                  aria-current={active ? "page" : undefined}
+                  className={`flex items-center gap-3.5 rounded-xl px-3.5 py-3 font-label-md text-sm ${
                     active
-                      ? "bg-[#00674F] font-bold text-white shadow-sm"
-                      : "font-medium text-[#3F4944] hover:bg-[#E5FFF7]"
+                      ? "bg-primary-container font-bold text-on-primary shadow-sm"
+                      : "font-medium text-on-surface-variant hover:bg-surface"
                   }`}
                 >
                   <Icon className="h-[22px] w-[22px]" />
                   <span className="flex-1">{label}</span>
-                  {dot && <span className="h-2.5 w-2.5 rounded-full bg-[#85004D]" />}
+                  {dot && <span className="h-2.5 w-2.5 rounded-full bg-tertiary" />}
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        <div className="flex items-center justify-between border-t border-[#D3EEE6] bg-[#E5FFF7]/60 p-4">
-          <span className="text-sm font-bold text-[#004D3A]">{memberName}</span>
+        <div className="flex items-center justify-between border-t border-surface-container-high bg-surface/60 p-4">
+          <span className="font-label-md text-sm font-bold text-primary">{memberName}</span>
           <button
             type="button"
             onClick={onClose}
-            className="text-xs font-bold text-red-600"
+            className="font-label-xs text-xs font-bold text-error"
           >
             Sign Out
           </button>

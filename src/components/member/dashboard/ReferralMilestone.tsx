@@ -22,29 +22,29 @@ export function ReferralMilestone({ milestone }: Props) {
   );
 
   return (
-    <section className="flex flex-col gap-4 rounded-2xl border border-[#F2D5E3] bg-gradient-to-r from-[#FFD9E4] via-[#FFF1F6] to-white p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+    <section className="flex flex-col gap-4 rounded-2xl border border-tertiary-fixed-dim/40 bg-linear-to-r from-tertiary-fixed/45 via-tertiary-fixed/20 to-surface-container-lowest p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#85004D] text-white shadow-sm">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-tertiary text-on-tertiary shadow-sm">
           <Gift className="h-6 w-6" />
         </div>
 
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wide text-[#85004D]">
+            <span className="text-xs font-bold uppercase tracking-wide text-tertiary">
               Your milestone
             </span>
-            <span className="text-xs text-[#6F7A74]">•</span>
-            <span className="text-xs font-medium text-[#6F7A74]">
+            <span className="text-xs text-outline">•</span>
+            <span className="text-xs font-medium text-outline">
               Referral progress
             </span>
           </div>
 
-          <h2 className="mt-1 text-lg font-bold text-[#071F1B]">
+          <h2 className="mt-1 text-lg font-bold text-on-surface">
             {milestone.packageName} {milestone.packageNumber} —{" "}
             {milestone.completedHands} of {milestone.totalHands} hands completed
           </h2>
 
-          <p className="mt-1 text-sm text-[#3F4944]">
+          <p className="mt-1 text-sm text-on-surface-variant">
             {remaining > 0
               ? `${remaining} more ${
                   remaining === 1 ? "hand is" : "hands are"
@@ -52,7 +52,7 @@ export function ReferralMilestone({ milestone }: Props) {
               : "You have completed this milestone."}
           </p>
 
-          <span className="mt-3 inline-flex rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-[#6F7A74]">
+          <span className="mt-3 inline-flex rounded-full bg-surface-container-lowest/80 px-3 py-1 text-xs font-semibold text-outline">
             Next: {milestone.nextPackageName} {milestone.nextPackageNumber} ·{" "}
             {milestone.nextPackageCompletedHands} of{" "}
             {milestone.nextPackageHands} hands
@@ -62,7 +62,7 @@ export function ReferralMilestone({ milestone }: Props) {
 
       <Link
         href="/savings/referrals"
-        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#85004D] px-5 text-sm font-semibold text-white shadow-sm hover:bg-[#B00068]"
+        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-tertiary px-5 text-sm font-semibold text-on-tertiary shadow-sm hover:bg-deep-magenta-brand"
       >
         <Share2 className="h-4 w-4" />
         View Referral Code

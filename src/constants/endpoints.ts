@@ -10,4 +10,6 @@ export const ENDPOINTS = {
   packageRegistrationPayment: "/registration-payment/claim",
   listPackages: "/packages",
   listSubscriptions: "/subscriptions/me",
+  wallet: "/wallet",
+  walletHistory: "/wallet/transactions",
 };

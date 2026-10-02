@@ -4,7 +4,7 @@ const TRUST_POINTS = ["Community-Rooted Programs", "Dedicated Elevate Wallet", "
 
 export function FinalCTA() {
   return (
-    <section className="w-full bg-primary-dark text-on-primary py-20 px-4 md:px-8 relative overflow-hidden">
+    <section className="w-full bg-primary text-on-primary py-20 px-4 md:px-8 relative overflow-hidden">
       <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center gap-6 relative z-10">
         <span className="px-4 py-1 rounded-full bg-primary text-aqua-brand font-sans text-xs font-bold uppercase tracking-wider">
           Community Foundation • Structured Contribution Journeys
