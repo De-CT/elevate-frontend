@@ -21,7 +21,7 @@ const links = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Elevate Wallet", href: "/wallet", icon: Wallet },
   { label: "My Savings", href: "/savings", icon: HandCoins },
-  { label: "Opportunities", href: "/opportunities", icon: HeartHandshake },
+  // { label: "Opportunities", href: "/opportunities", icon: HeartHandshake },
   { label: "Transactions", href: "/transactions", icon: ReceiptText },
   { label: "Notifications", href: "/notifications", icon: Bell, dot: true },
   { label: "Support", href: "/support", icon: Headset },
