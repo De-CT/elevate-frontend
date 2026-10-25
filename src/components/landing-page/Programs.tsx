@@ -11,6 +11,11 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Package } from "@/store/useAppStore";
+import {
+  formatPackageDuration,
+  getOccurrenceAdjective,
+  getOccurrenceUnit,
+} from "@/utils/package-format";
 
 type ProgramFeature = {
   icon: LucideIcon;
@@ -42,12 +47,15 @@ type Program = {
 const naira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
 
 function toProgram(packageData: Package): Program | null {
-  const weeklyAmount = Number(packageData.weeklyAmount);
+  const contributionAmount = Number(packageData.contributionAmount);
   const registrationFee = Number(packageData.registrationFee);
   const referralBonus = Number(packageData.referralBonus);
   const clearanceFee = Number(packageData.clearanceFee);
-  const totalContribution = weeklyAmount * packageData.durationWeeks;
-  const durationMonths = packageData.durationWeeks / 4;
+  const duration = packageData.duration;
+  const durationLabel = formatPackageDuration(duration, packageData.occurrence);
+  const occurrenceUnit = getOccurrenceUnit(packageData.occurrence);
+  const occurrenceAdjective = getOccurrenceAdjective(packageData.occurrence);
+  const totalContribution = contributionAmount * duration;
   const isPinnacle = packageData.type === "PINNACLE";
 
   const presentation = isPinnacle
@@ -67,7 +75,7 @@ function toProgram(packageData: Package): Program | null {
         iconColor: "text-tertiary",
         title: "Referral Opportunity & Incentive",
         description:
-          `One referral opportunity per savings account after 4 weeks. Earns a ${naira(referralBonus)} referral incentive when successfully qualified.`,
+          `One referral opportunity per savings account after 4 contribution periods. Earns a ${naira(referralBonus)} referral incentive when successfully qualified.`,
       },
       {
         icon: CalendarCheck,
@@ -75,7 +83,7 @@ function toProgram(packageData: Package): Program | null {
         iconColor: "text-on-secondary-fixed",
         title: "Transparent Maturity Process",
         description:
-          `An administrative clearance of ${naira(clearanceFee)} applies upon completion of Week ${packageData.durationWeeks}. Payout is processed directly from your savings account.`,
+          `An administrative clearance of ${naira(clearanceFee)} applies upon completion of ${durationLabel}. Payout is processed directly from your savings account.`,
       },
       {
         icon: ShieldCheck,
@@ -83,7 +91,7 @@ function toProgram(packageData: Package): Program | null {
         iconColor: "text-on-surface-variant",
         title: "Accountability Discipline",
         description:
-          "A default fee applies to missed weekly contributions — full terms are confirmed at signup. Contributions are strictly non-withdrawable prior to maturity.",
+          `A default fee applies to missed ${occurrenceAdjective} contributions — full terms are confirmed at signup. Contributions are strictly non-withdrawable prior to maturity.`,
       },
     ],
     ctaLabel: "Start Pinnacle Journey",
@@ -105,7 +113,7 @@ function toProgram(packageData: Package): Program | null {
         iconColor: "text-on-secondary-fixed",
         title: "Nutritional Foodstuff Benefit",
         description:
-          `${packageData.durationWeeks} weeks duration, ${naira(weeklyAmount)} per week, with a foodstuff benefit upon completion: staple nutritional goods including 50kg rice, vegetable oil, beans, and essentials (not cash).`,
+          `${durationLabel} duration, ${naira(contributionAmount)} per ${occurrenceUnit}, with a foodstuff benefit upon completion: staple nutritional goods including 50kg rice, vegetable oil, beans, and essentials (not cash).`,
       },
       {
         icon: Users,
@@ -121,7 +129,7 @@ function toProgram(packageData: Package): Program | null {
         iconColor: "text-on-surface-variant",
         title: "Default Terms & Non-Withdrawal",
         description:
-          `A default fee applies to missed weekly payments. Contributions are non-withdrawable prior to maturity; a ${naira(clearanceFee)} administrative clearance applies prior to benefit distribution.`,
+          `A default fee applies to missed ${occurrenceAdjective} payments. Contributions are non-withdrawable prior to maturity; a ${naira(clearanceFee)} administrative clearance applies prior to benefit distribution.`,
       },
     ],
     ctaLabel: "Join Chop Beta",
@@ -133,9 +141,9 @@ function toProgram(packageData: Package): Program | null {
   return {
     id: packageData.id,
     name: packageData.name.toUpperCase(),
-    subtitle: `${packageData.durationWeeks}-Week Member Contribution Journey`,
-    duration: String(packageData.durationWeeks),
-    durationUnit: "Weeks",
+    subtitle: `${durationLabel} Member Contribution Journey`,
+    duration: String(duration),
+    durationUnit: `${occurrenceUnit}s`,
     highlights: [
       {
         label: "Registration Fee",
@@ -143,8 +151,8 @@ function toProgram(packageData: Package): Program | null {
         valueColor: registrationFee ? undefined : "text-secondary-brand",
       },
       {
-        label: "Weekly Contribution",
-        value: naira(weeklyAmount),
+        label: `${occurrenceAdjective[0].toUpperCase()}${occurrenceAdjective.slice(1)} Contribution`,
+        value: naira(contributionAmount),
         valueColor: isPinnacle ? "text-primary" : "text-tertiary",
       },
       { label: "Total Contribution", value: naira(totalContribution) },

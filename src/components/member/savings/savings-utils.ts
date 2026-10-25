@@ -14,7 +14,7 @@ export const getTargetAmount = (item: SavingsPackage) =>
   item.hands.length * item.handAmount * item.duration;
 
 export const getNextPayment = (item: SavingsPackage) =>
-  item.hands.length * item.handAmount;
+  item.nextPaymentAmount;
 
 export const getProgress = (item: SavingsPackage) => {
   const target = getTargetAmount(item);

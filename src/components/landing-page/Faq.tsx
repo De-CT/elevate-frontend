@@ -20,12 +20,12 @@ const FAQS = [
     {
         question: "What is the Elevate Wallet?",
         answer:
-            "The Elevate Wallet is your central funding hub on the platform. It comes with a dedicated Nigerian virtual account number. You fund this wallet via standard bank transfer, and weekly contributions are deducted from it automatically or manually to fund your active savings sub-accounts.",
+            "The Elevate Wallet is your central funding hub on the platform. It comes with a dedicated Nigerian virtual account number. You fund this wallet via standard bank transfer, and contributions are deducted from it automatically or manually according to each active savings program's schedule.",
     },
     {
         question: "Can I have multiple savings accounts?",
         answer:
-            "Yes. A single member can open and manage multiple individual savings accounts (e.g., two Pinnacle slots and one Chop Beta slot) under their single, central Elevate Wallet. Each account tracks its own timeline and weekly payment schedule independently.",
+            "Yes. A single member can open and manage multiple individual savings accounts (e.g., two Pinnacle slots and one Chop Beta slot) under their single, central Elevate Wallet. Each account tracks its own timeline and payment schedule independently.",
     },
     {
         question: "When does my Pinnacle referral become active?",
@@ -33,7 +33,7 @@ const FAQS = [
             "Your unique referral invitation code for each Pinnacle savings account unlocks automatically after Week 4 of consistent on-time contributions. A single qualified invite completed after this period earns you the ₦20,000 referral incentive at maturity.",
     },
     {
-        question: "What happens if I miss a weekly contribution?",
+        question: "What happens if I miss a contribution?",
         answer:
             "A default fee applies to missed contributions to maintain community discipline and accountability — full terms and resolution timelines are confirmed at signup.",
     },
@@ -45,7 +45,7 @@ const FAQS = [
     {
         question: "What happens at maturity?",
         answer:
-            "Upon reaching the final week (Week 12 for Pinnacle or Week 25 for Chop Beta), your journey status updates to Completed. For Pinnacle, your savings balance (and any earned referral incentive, minus the clearance fee) is transferred directly to your verified commercial bank account. For Chop Beta, you receive a digital collection voucher to pick up your packaged foodstuff bundles at your local distribution center.",
+            "Upon completing the program duration (12 weeks for Pinnacle or 5 months for Chop Beta), your journey status updates to Completed. For Pinnacle, your savings balance (and any earned referral incentive, minus the clearance fee) is transferred directly to your verified commercial bank account. For Chop Beta, you receive a digital collection voucher to pick up your packaged foodstuff bundles at your local distribution center.",
     },
     {
         question: "What is the clearance fee?",

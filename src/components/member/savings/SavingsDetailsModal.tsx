@@ -86,10 +86,27 @@ export default function SavingsDetailsModal({ savings, onClose }: Props) {
                 savings.frequency === "Weekly" ? "weeks" : "months"
               }`}
             />
-            <Detail label="Next payment" value={formatMoney(getNextPayment(savings))} />
-            <Detail label="Next payment date" value={savings.nextPaymentDate ?? "Not available"} />
+            <Detail
+              label={savings.status === "pending-activation" ? "Registration fee due" : "Next payment"}
+              value={formatMoney(
+                savings.status === "pending-activation"
+                  ? savings.registrationFeeDue
+                  : getNextPayment(savings)
+              )}
+            />
+            <Detail
+              label="Next payment date"
+              value={savings.nextPaymentDate
+                ? new Date(savings.nextPaymentDate).toLocaleDateString("en-NG")
+                : "Not available"}
+            />
+            <Detail label="Registration fee due" value={formatMoney(savings.registrationFeeDue)} />
+            <Detail
+              label="Subscription date"
+              value={new Date(savings.createdAt).toLocaleDateString("en-NG")}
+            />
             <Detail label="Status" value={savings.status} />
-            <Detail label="Batch code" value={savings.batchCode} />
+            <Detail label="Subscription ID" value={savings.id} />
           </div>
 
           <div className="space-y-2 border-t border-surface-container-low pt-4">
@@ -98,9 +115,9 @@ export default function SavingsDetailsModal({ savings, onClose }: Props) {
           </div>
 
           <p className="rounded-lg bg-surface-container-low p-3 font-body text-xs leading-relaxed text-on-surface-variant">
-            Payments are normally taken automatically from your Elevate Wallet.
-            If a payment is missed, check the payment details in your account
-            before making a manual recovery payment.
+            {savings.status === "pending-activation"
+              ? "Your hands will activate after the registration fee is confirmed."
+              : "Payments are normally taken automatically from your Elevate Wallet. If a payment is missed, check the payment details in your account before making a manual recovery payment."}
           </p>
         </div>
 

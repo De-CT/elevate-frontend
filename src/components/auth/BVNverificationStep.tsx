@@ -6,9 +6,10 @@ import { Form, Formik, type FormikErrors } from "formik";
 import { CustomButton } from "@/components/CustomButton";
 import { CustomInput } from "@/components/CustomInput";
 import { bvnVerify, getProfile, subscribeToPackage } from "@/backend/user";
-import { useAppStore } from "@/store/useAppStore";
+import { getRegistrationSubscriptions, useAppStore } from "@/store/useAppStore";
 import type { ProgramSelection } from "./ChooseProgramStep";
 import { useUserStore } from "@/store/useUserStore";
+import toast from "react-hot-toast";
 
 export interface BvnVerificationResult {
     verified: true;
@@ -25,7 +26,7 @@ interface BvnVerificationStepProps {
     presentation?: "step" | "modal";
     onBack?: () => void;
     onClose?: () => void;
-    onVerified: (result: BvnVerificationResult) => void;
+    onVerified: (result: string) => void;
 }
 
 interface FormValues {
@@ -97,6 +98,7 @@ export function BvnVerificationStep({
     const registrationFee = Number(selectedPackage?.registrationFee ?? 0) * (selection?.quantity ?? 0);
     const isModal = presentation === "modal";
     const { setUser } = useUserStore()
+    const setRegistrationDraft = useAppStore((state) => state.setRegistrationDraft);
 
     return (
         <div className={isModal ? "fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-4" : "w-full"}>
@@ -150,14 +152,29 @@ export function BvnVerificationStep({
                         setSubmitError(null);
                         try {
                             const result = await bvnVerify({ bvn: values.bvn });
-                            await subscribeToPackage(selection)
+                            const draft = useAppStore.getState().registrationDraft;
+                            if (
+                                !draft ||
+                                draft.selection.packageType !== selection.packageType ||
+                                draft.selection.quantity !== selection.quantity
+                            ) {
+                                throw new Error("Your saved program selection was not found. Please choose your program again.");
+                            }
+
+                            const subscription = await subscribeToPackage(selection);
+
+
+                            setRegistrationDraft({ ...draft, subscription });
+
+
                             const res = await getProfile()
                             console.log("user", res)
                             setUser(res)
                             resetForm();
-                            onVerified(result as BvnVerificationResult);
-                        } catch (error) {
-                            setSubmitError(toSubmitError(error));
+                            onVerified(res.kycStatus);
+                        } catch (error: any) {
+                            toast.error(error.message)
+                            // setSubmitError(toSubmitError(error));
                         }
                     }}
                 >

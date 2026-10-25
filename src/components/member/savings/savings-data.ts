@@ -3,6 +3,7 @@ import type { SavingsPackage } from "./savings-types";
 export const demoSavings: SavingsPackage[] = [
   {
     id: "demo-pinnacle",
+    createdAt: "2026-08-01T00:00:00.000Z",
     name: "Pinnacle",
     batchCode: "PIN-DEMO-001",
     status: "active",
@@ -11,16 +12,19 @@ export const demoSavings: SavingsPackage[] = [
     duration: 12,
     completedPeriods: 8,
     nextPaymentDate: "19 Sep 2026",
+    nextPaymentAmount: 25000,
+    registrationFeeDue: 0,
     hands: [
-      { id: "1", savedAmount: 40000, completedPeriods: 8, status: "on-track" },
-      { id: "2", savedAmount: 40000, completedPeriods: 8, status: "on-track" },
-      { id: "3", savedAmount: 35000, completedPeriods: 7, status: "payment-missed" },
-      { id: "4", savedAmount: 40000, completedPeriods: 8, status: "on-track" },
-      { id: "5", savedAmount: 40000, completedPeriods: 8, status: "on-track" },
+      { id: "1", handNumber: 1, savedAmount: 40000, completedPeriods: 8, missedCycles: 0, activatedAt: null, maturedAt: null, status: "on-track", nextDue: null },
+      { id: "2", handNumber: 2, savedAmount: 40000, completedPeriods: 8, missedCycles: 0, activatedAt: null, maturedAt: null, status: "on-track", nextDue: null },
+      { id: "3", handNumber: 3, savedAmount: 35000, completedPeriods: 7, missedCycles: 1, activatedAt: null, maturedAt: null, status: "payment-missed", nextDue: null },
+      { id: "4", handNumber: 4, savedAmount: 40000, completedPeriods: 8, missedCycles: 0, activatedAt: null, maturedAt: null, status: "on-track", nextDue: null },
+      { id: "5", handNumber: 5, savedAmount: 40000, completedPeriods: 8, missedCycles: 0, activatedAt: null, maturedAt: null, status: "on-track", nextDue: null },
     ],
   },
   {
     id: "demo-chop",
+    createdAt: "2026-08-01T00:00:00.000Z",
     name: "Chop Beta",
     batchCode: "CHOP-DEMO-001",
     status: "active",
@@ -31,9 +35,11 @@ export const demoSavings: SavingsPackage[] = [
     nextPaymentDate: "20 Oct 2026",
     benefit: "Foodstuff benefit upon completion",
     hands: [
-      { id: "1", savedAmount: 30000, completedPeriods: 2, status: "on-track" },
-      { id: "2", savedAmount: 30000, completedPeriods: 2, status: "on-track" },
-      { id: "3", savedAmount: 30000, completedPeriods: 2, status: "on-track" },
+      { id: "1", handNumber: 1, savedAmount: 30000, completedPeriods: 2, missedCycles: 0, activatedAt: null, maturedAt: null, status: "on-track", nextDue: null },
+      { id: "2", handNumber: 2, savedAmount: 30000, completedPeriods: 2, missedCycles: 0, activatedAt: null, maturedAt: null, status: "on-track", nextDue: null },
+      { id: "3", handNumber: 3, savedAmount: 30000, completedPeriods: 2, missedCycles: 0, activatedAt: null, maturedAt: null, status: "on-track", nextDue: null },
     ],
+    nextPaymentAmount: 90000,
+    registrationFeeDue: 0,
   },
 ];

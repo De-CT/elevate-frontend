@@ -16,7 +16,10 @@ type SavingsPlan = {
   nextPayment: number;
   paymentFrequency: string;
   benefitLabel: string;
-  status: "Active" | "Completed" | "Needs Attention";
+  registrationFeeDue: number;
+  pendingHands: number;
+  nextPaymentDate?: string;
+  status: "Active" | "Completed" | "Needs Attention" | "Pending Activation";
 };
 
 const naira = (amount: number) =>
@@ -26,7 +29,15 @@ const naira = (amount: number) =>
     maximumFractionDigits: 0,
   }).format(amount);
 
-export function SavingsCard({ plan }: { plan: SavingsPlan }) {
+export function SavingsCard({
+  plan,
+  onActivate,
+  isActivating,
+}: {
+  plan: SavingsPlan;
+  onActivate: () => void;
+  isActivating: boolean;
+}) {
   const progress =
     plan.target > 0
       ? Math.min((plan.saved / plan.target) * 100, 100)
@@ -34,6 +45,8 @@ export function SavingsCard({ plan }: { plan: SavingsPlan }) {
 
   const isChopBeta = plan.packageName === "Chop Beta";
   const Icon = isChopBeta ? ShoppingBasket : Store;
+  const statusLabel =
+    plan.status === "Pending Activation" ? "Pending activation" : plan.status;
 
   return (
     <article className="flex flex-col justify-between gap-4 rounded-2xl border border-surface-container-high/70 bg-surface-container-lowest p-5 shadow-[0_4px_16px_-2px_rgba(0,77,58,0.06)]">
@@ -56,7 +69,9 @@ export function SavingsCard({ plan }: { plan: SavingsPlan }) {
                 {plan.hands === 1 ? "Hand" : "Hands"}
               </h3>
               <p className="mt-0.5 font-body text-xs text-outline">
-                {plan.handsOnTrack} on track
+                {plan.status === "Pending Activation"
+                  ? "Awaiting registration fee confirmation"
+                  : `${plan.handsOnTrack} on track`}
                 {plan.handsNeedingAttention > 0 &&
                   `, ${plan.handsNeedingAttention} need attention`}
               </p>
@@ -64,7 +79,7 @@ export function SavingsCard({ plan }: { plan: SavingsPlan }) {
           </div>
 
           <span className="shrink-0 rounded-full bg-surface-container px-2.5 py-1 font-label-xs text-[11px] font-bold text-on-secondary-fixed-variant">
-            {plan.status}
+            {statusLabel}
           </span>
         </div>
 
@@ -111,21 +126,37 @@ export function SavingsCard({ plan }: { plan: SavingsPlan }) {
             <CalendarClock className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
           )}
           <span>
-            Next auto-pay:{" "}
+            {plan.registrationFeeDue > 0 ? "Registration fee due: " : "Next contribution: "}
             <strong className="font-currency-card text-on-surface">
-              {naira(plan.nextPayment)}/{plan.paymentFrequency}
+              {plan.registrationFeeDue > 0
+                ? naira(plan.registrationFeeDue)
+                : plan.nextPayment > 0
+                  ? `${naira(plan.nextPayment)}/${plan.paymentFrequency}`
+                  : "Not scheduled"}
             </strong>
             <span className="block text-outline">{plan.benefitLabel}</span>
           </span>
         </div>
 
-        <Link
-          href={`/savings/${plan.id}`}
-          className="inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-full bg-surface px-4 font-label-xs text-xs font-bold text-primary hover:bg-surface-container"
-        >
-          View Savings
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          {plan.packageName === "Pinnacle" && plan.pendingHands > 0 && (
+            <button
+              type="button"
+              onClick={onActivate}
+              disabled={isActivating}
+              className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full bg-primary px-4 font-label-xs text-xs font-bold text-on-primary hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isActivating ? "Activating..." : "Activate Pinnacle"}
+            </button>
+          )}
+          <Link
+            href={`/savings/${plan.id}`}
+            className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1 rounded-full bg-surface px-4 font-label-xs text-xs font-bold text-primary hover:bg-surface-container"
+          >
+            View details
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
       </div>
     </article>
   );

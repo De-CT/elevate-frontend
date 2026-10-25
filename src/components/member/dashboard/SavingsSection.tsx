@@ -17,10 +17,21 @@ type SavingsPlan = {
   nextPayment: number;
   paymentFrequency: string;
   benefitLabel: string;
-  status: "Active" | "Completed" | "Needs Attention";
+  registrationFeeDue: number;
+  pendingHands: number;
+  nextPaymentDate?: string;
+  status: "Active" | "Completed" | "Needs Attention" | "Pending Activation";
 };
 
-export function SavingsSection({ plans }: { plans: SavingsPlan[] }) {
+export function SavingsSection({
+  plans,
+  onActivateSubscription,
+  activatingSubscriptionId,
+}: {
+  plans: SavingsPlan[];
+  onActivateSubscription: (id: string) => void;
+  activatingSubscriptionId: string | null;
+}) {
   const activeCount = plans.filter((plan) => plan.status === "Active").length;
 
   return (
@@ -65,7 +76,12 @@ export function SavingsSection({ plans }: { plans: SavingsPlan[] }) {
         <>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {plans.map((plan) => (
-              <SavingsCard key={plan.id} plan={plan} />
+              <SavingsCard
+                key={plan.id}
+                plan={plan}
+                onActivate={() => onActivateSubscription(plan.id)}
+                isActivating={activatingSubscriptionId === plan.id}
+              />
             ))}
           </div>
           <Link

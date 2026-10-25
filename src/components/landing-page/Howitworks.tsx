@@ -28,9 +28,9 @@ const STEPS: {
   {
     number: "04",
     icon: Clock,
-    title: "Weekly Contributions",
+    title: "Program Contributions",
     description:
-      "Automated or manual weekly allocations deducted directly from your central wallet to each active savings account.",
+      "Automated or manual contributions on each program's schedule, deducted directly from your central wallet to each active savings account.",
   },
   {
     number: "05",

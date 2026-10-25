@@ -7,6 +7,11 @@ import { listPackages } from "@/backend/user";
 import { useAppStore, type RegistrationSelection } from "@/store/useAppStore";
 import toast from "react-hot-toast";
 import { BrandSpinner } from "@/components/BrandSpinner";
+import {
+  formatPackageDuration,
+  getOccurrenceAdjective,
+  getOccurrenceUnit,
+} from "@/utils/package-format";
 
 const PINNACLE_PRESETS = [1, 3, 5, 10];
 
@@ -49,27 +54,33 @@ export function ChooseProgramStep({
 
   const adjustQty = (delta: number) => setPinnacleQty((q) => Math.max(1, q + delta));
 
-  const weeklyAmount = Number(pinnaclePackage?.weeklyAmount ?? 0);
+  const contributionAmount = Number(pinnaclePackage?.contributionAmount ?? 0);
   const registrationFee = Number(pinnaclePackage?.registrationFee ?? 0);
-  const durationWeeks = pinnaclePackage?.durationWeeks ?? 0;
+  const duration = pinnaclePackage?.duration ?? 0;
+  const occurrence = pinnaclePackage?.occurrence;
+  const occurrenceUnit = getOccurrenceUnit(occurrence);
+  const occurrenceAdjective = getOccurrenceAdjective(occurrence);
   const clearanceFee = Number(pinnaclePackage?.clearanceFee ?? 0);
   const referralBonus = Number(pinnaclePackage?.referralBonus ?? 0);
-  const chopWeeklyAmount = Number(chopBetaPackage?.weeklyAmount ?? 0);
+  const chopContributionAmount = Number(chopBetaPackage?.contributionAmount ?? 0);
   const chopRegistrationFee = Number(chopBetaPackage?.registrationFee ?? 0);
-  const chopDurationWeeks = chopBetaPackage?.durationWeeks ?? 0;
+  const chopDuration = chopBetaPackage?.duration ?? 0;
+  const chopOccurrence = chopBetaPackage?.occurrence;
+  const chopOccurrenceUnit = getOccurrenceUnit(chopOccurrence);
+  const chopOccurrenceAdjective = getOccurrenceAdjective(chopOccurrence);
   const chopClearanceFee = Number(chopBetaPackage?.clearanceFee ?? 0);
   const chopAccountLabel = chopBetaQty > 1 ? "accounts" : "account";
-  const chopWeeklyTotal = chopBetaQty * chopWeeklyAmount;
-  const chopTotal = chopWeeklyTotal * chopDurationWeeks;
+  const chopContributionTotal = chopBetaQty * chopContributionAmount;
+  const chopTotal = chopContributionTotal * chopDuration;
 
   const calc = useMemo(
     () => ({
       registration: pinnacleQty * registrationFee,
-      weekly: pinnacleQty * weeklyAmount,
-      payout: pinnacleQty * weeklyAmount * durationWeeks,
+      contribution: pinnacleQty * contributionAmount,
+      payout: pinnacleQty * contributionAmount * duration,
       totalBonus: pinnacleQty * referralBonus,
     }),
-    [pinnacleQty, registrationFee, weeklyAmount, durationWeeks, referralBonus]
+    [pinnacleQty, registrationFee, contributionAmount, duration, referralBonus]
   );
 
   useEffect(() => {
@@ -112,7 +123,8 @@ export function ChooseProgramStep({
               </span>
             </div>
             <p className="font-body text-base text-on-surface font-medium mb-5">
-              Save weekly toward a guaranteed cash payout at {durationWeeks}-week maturity.
+              Save {occurrenceAdjective} toward a guaranteed cash payout at{" "}
+              {formatPackageDuration(duration, occurrence)} maturity.
             </p>
 
             <div className="bg-surface-container-low rounded-xl p-4 sm:p-5 mb-5 border border-surface-container">
@@ -168,15 +180,19 @@ export function ChooseProgramStep({
                 </span>
               </div>
               <div className="flex justify-between items-baseline text-sm sm:text-base">
-                <span className="font-body text-on-surface-variant">Weekly contribution:</span>
+                <span className="font-body text-on-surface-variant">
+                  {occurrenceAdjective[0].toUpperCase()}{occurrenceAdjective.slice(1)} contribution:
+                </span>
                 <span className="font-headline font-semibold text-primary">
-                  {pinnacleQty} {accountLabel} × {naira(weeklyAmount)} ={" "}
-                  <span className="font-bold">{naira(calc.weekly)} / week</span>
+                  {pinnacleQty} {accountLabel} × {naira(contributionAmount)} ={" "}
+                  <span className="font-bold">{naira(calc.contribution)} / {occurrenceUnit}</span>
                 </span>
               </div>
               <div className="flex justify-between items-baseline text-sm sm:text-base">
                 <span className="font-body text-on-surface-variant">Duration:</span>
-                <span className="font-headline font-bold text-primary">{durationWeeks} weeks</span>
+                <span className="font-headline font-bold text-primary">
+                  {formatPackageDuration(duration, occurrence)}
+                </span>
               </div>
               <div className="h-px bg-surface-container-highest" />
               <div className="flex justify-between items-baseline pt-1">
@@ -188,7 +204,7 @@ export function ChooseProgramStep({
                 </span>
               </div>
               <p className="font-body text-xs text-on-surface-variant text-right">
-                {pinnacleQty} {accountLabel} × {naira(weeklyAmount * durationWeeks)} = {naira(calc.payout)}
+                {pinnacleQty} {accountLabel} × {naira(contributionAmount * duration)} = {naira(calc.payout)}
               </p>
             </div>
 
@@ -214,7 +230,7 @@ export function ChooseProgramStep({
                   • <strong>Clearance fee:</strong> {naira(clearanceFee)} per account at completion.
                 </p>
                 <div className="pt-1 text-tertiary">
-                  • <strong>Referral bonus:</strong> Refer 1 member per account after 4 weeks to
+                  • <strong>Referral bonus:</strong> Refer 1 member per account after 4 contribution periods to
                   qualify each account for a <strong>{naira(referralBonus)} bonus</strong> at maturity (
                   {naira(calc.totalBonus)} total potential bonus for {pinnacleQty} {accountLabel}).
                 </div>
@@ -301,10 +317,10 @@ export function ChooseProgramStep({
             <div className="bg-surface-container-low rounded-xl p-4 sm:p-5 space-y-3 mb-6">
               <div className="flex justify-between items-baseline">
                 <span className="font-body text-sm sm:text-base text-on-surface-variant">
-                  Weekly savings:
+                  {chopOccurrenceAdjective[0].toUpperCase()}{chopOccurrenceAdjective.slice(1)} savings:
                 </span>
                 <span className="font-headline font-bold text-lg sm:text-xl text-primary">
-                  {naira(chopWeeklyTotal)} / week
+                  {naira(chopContributionTotal)} / {chopOccurrenceUnit}
                 </span>
               </div>
               <div className="flex justify-between items-baseline">
@@ -312,7 +328,7 @@ export function ChooseProgramStep({
                   Duration:
                 </span>
                 <span className="font-headline font-bold text-lg sm:text-xl text-primary">
-                  {chopDurationWeeks} weeks
+                  {formatPackageDuration(chopDuration, chopOccurrence)}
                 </span>
               </div>
               <div className="h-px bg-surface-container" />

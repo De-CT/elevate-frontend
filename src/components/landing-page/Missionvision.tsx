@@ -9,7 +9,7 @@ const VALUES: { icon: LucideIcon; title: string; description: string }[] = [
   {
     icon: Lock,
     title: "Community Accountability",
-    description: "Disciplined weekly timelines ensuring fairness, reliability, and security for all participating members.",
+    description: "Disciplined program-specific timelines ensuring fairness, reliability, and security for all participating members.",
   },
   {
     icon: Heart,

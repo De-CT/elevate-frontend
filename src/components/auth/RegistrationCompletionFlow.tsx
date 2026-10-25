@@ -6,10 +6,10 @@ import { ActivationStep } from "./ActivationStep";
 import { ChooseProgramStep, type ProgramSelection } from "./ChooseProgramStep";
 import { StepIndicator } from "./StepIndicator";
 import { AuthHeader } from "./AuthHeader";
-import { useAppStore } from "@/store/useAppStore";
+import { getRegistrationSubscriptions, useAppStore } from "@/store/useAppStore";
 import { useUserStore } from "@/store/useUserStore";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
-import { listPackages } from "@/backend/user";
+import { claimSubscription, getProfile, listPackages } from "@/backend/user";
 import { CustomButton } from "@/components/CustomButton";
 
 export function RegistrationCompletionFlow() {
@@ -19,6 +19,7 @@ export function RegistrationCompletionFlow() {
     const [retryCount, setRetryCount] = useState(0);
     const router = useRouter();
     const user = useUserStore((state) => state.user);
+    const { setUser } = useUserStore();
     const setRegistrationDraft = useAppStore((state) => state.setRegistrationDraft);
     const setActivePackages = useAppStore((state) => state.setActivePackages);
 
@@ -31,6 +32,9 @@ export function RegistrationCompletionFlow() {
 
             const savedDraft = useAppStore.getState().registrationDraft;
             const packages = await listPackages();
+            const res = await getProfile()
+            console.log("user", res)
+            setUser(res)
             setActivePackages(packages);
 
             if (savedDraft && savedDraft.userId === user?.id) {
@@ -50,7 +54,7 @@ export function RegistrationCompletionFlow() {
     }, [retryCount, setActivePackages, setRegistrationDraft, user?.id]);
 
     const handleProgramSelect = (choice: ProgramSelection) => {
-        if (user) setRegistrationDraft({ selection: choice, userId: user.id });
+        if (user) setRegistrationDraft({ selection: choice, userId: user.id, subscription: null });
         setSelection(choice);
     };
 
@@ -59,7 +63,30 @@ export function RegistrationCompletionFlow() {
         setSelection(null);
     };
 
-    const handleFinish = () => {
+    const handleFinish = async () => {
+        const draft = useAppStore.getState().registrationDraft;
+        const subscriptions = getRegistrationSubscriptions(draft?.subscription);
+        if (!draft || !subscriptions.length || subscriptions.some((item) => !item?.id)) {
+            throw new Error("The subscription details are missing. Please try selecting your program again.");
+        }
+
+        if (draft.selection.packageType === "PINNACLE") {
+            for (const subscription of subscriptions) {
+                if (subscription.hands && subscription.hands.length > 1) {
+                    await claimSubscription({ groupId: subscription.id });
+                } else {
+                    await claimSubscription({ subscriptionId: subscription.id });
+                }
+
+                const currentDraft = useAppStore.getState().registrationDraft;
+                if (currentDraft?.userId === draft.userId) {
+                    const remainingSubscriptions = getRegistrationSubscriptions(currentDraft.subscription)
+                        .filter((item) => item.id !== subscription.id);
+                    setRegistrationDraft({ ...currentDraft, subscription: remainingSubscriptions });
+                }
+            }
+        }
+
         setRegistrationDraft(null);
         router.push("/dashboard");
     };

@@ -1,16 +1,19 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+export type PackageOccurrence = "WEEKLY" | "MONTHLY";
+
 export type Package = {
   clearanceFee: string;
-  durationWeeks: number;
+  contributionAmount: string;
   id: string;
   isActive: boolean;
-  name: "Pinnacle" | "Chop Beta";
+  name: string;
+  occurrence: PackageOccurrence;
+  duration: number;
   referralBonus: string;
   registrationFee: string;
   type: "PINNACLE" | "CHOP_BETA";
-  weeklyAmount: string;
 };
 
 export type RegistrationSelection = {
@@ -18,9 +21,27 @@ export type RegistrationSelection = {
   quantity: number;
 };
 
+export type RegistrationSubscription = {
+  id: string;
+  hands?: Array<{ id: string }>;
+  [key: string]: unknown;
+};
+
+export type RegistrationSubscriptionResponse =
+  | RegistrationSubscription[]
+  | RegistrationSubscription;
+
+export function getRegistrationSubscriptions(
+  response: RegistrationSubscriptionResponse | null | undefined
+): RegistrationSubscription[] {
+  if (!response) return [];
+  return Array.isArray(response) ? response : [response];
+}
+
 export type RegistrationDraft = {
   selection: RegistrationSelection;
   userId: string;
+  subscription?: RegistrationSubscriptionResponse | null;
 };
 
 interface AppStoreProps {

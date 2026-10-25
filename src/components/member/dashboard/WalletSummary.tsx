@@ -4,9 +4,11 @@ import { ArrowUpRight, Copy, Wallet } from "lucide-react";
 
 type Props = {
   wallet: {
-    balance: number;
+    balance: number | null;
     accountNumber: string;
     bankName: string;
+    loading: boolean;
+    error: string | null;
   };
 };
 
@@ -32,9 +34,22 @@ export function WalletSummary({ wallet }: Props) {
         </div>
 
         <p className="mt-6 font-label-md text-sm text-white/70">Money Available</p>
-        <h1 className="mt-1 font-currency-display text-3xl font-bold tracking-tight sm:text-4xl">
-          {naira(wallet.balance)}
-        </h1>
+        {wallet.loading ? (
+          <div
+            role="status"
+            aria-label="Loading wallet balance"
+            className="mt-2 h-10 w-52 animate-pulse rounded-lg bg-white/20 sm:h-12"
+          />
+        ) : (
+          <h1 className="mt-1 font-currency-display text-3xl font-bold tracking-tight sm:text-4xl">
+            {wallet.balance === null ? "Balance unavailable" : naira(wallet.balance)}
+          </h1>
+        )}
+        {wallet.error && (
+          <p role="alert" className="mt-2 text-sm text-white/80">
+            {wallet.error}
+          </p>
+        )}
 
         <div className="mt-6 flex flex-wrap gap-3">
           <Link

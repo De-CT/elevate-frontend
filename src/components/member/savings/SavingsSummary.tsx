@@ -13,7 +13,9 @@ export default function SavingsSummary({
   packages,
   onStart,
 }: Props) {
-  const activePackages = packages.filter((item) => item.status === "active");
+  const activePackages = packages.filter(
+    (item) => item.status === "active" || item.status === "pending-activation"
+  );
 
   return (
     <section className="flex flex-col justify-between gap-5 rounded-2xl border border-surface-container-low bg-surface-container-lowest p-5 shadow-sm sm:p-6 md:flex-row md:items-center">
@@ -32,7 +34,7 @@ export default function SavingsSummary({
         </h2>
 
         <p className="mt-2 font-body text-xs leading-relaxed text-on-surface-variant">
-          Active packages:{" "}
+          Packages:{" "}
           <span className="font-label-md font-semibold text-primary">
             {activePackages.length
               ? activePackages

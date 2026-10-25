@@ -12,4 +12,5 @@ export const ENDPOINTS = {
   listSubscriptions: "/subscriptions/me",
   wallet: "/wallet",
   walletHistory: "/wallet/transactions",
+  simulateDeposit: "/webhooks/simulate-deposit",
 };

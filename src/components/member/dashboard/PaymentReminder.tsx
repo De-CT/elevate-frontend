@@ -2,8 +2,24 @@
 import Link from "next/link";
 import { AlertCircle, ArrowRight, CheckCircle2 } from "lucide-react";
 
-export function PaymentReminder({ hasPayments = false }: { hasPayments?: boolean }) {
-  if (!hasPayments) {
+export function PaymentReminder({
+  hasPayments = false,
+  registrationFeeDue = 0,
+  loading = false,
+}: {
+  hasPayments?: boolean;
+  registrationFeeDue?: number;
+  loading?: boolean;
+}) {
+  if (loading) {
+    return (
+      <section className="rounded-2xl border border-surface-container-high bg-surface-container-lowest p-5 text-sm text-on-surface-variant">
+        Checking your payment schedule...
+      </section>
+    );
+  }
+
+  if (!hasPayments && registrationFeeDue <= 0) {
     return (
       <section className="relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-surface-container-high bg-surface-container-lowest p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div className="absolute bottom-0 left-0 top-0 w-1.5 bg-secondary-accent" />
@@ -39,14 +55,21 @@ export function PaymentReminder({ hasPayments = false }: { hasPayments?: boolean
 
         <div>
           <p className="font-label-xs text-xs font-bold uppercase tracking-wide text-tertiary">
-            Payment reminder
+            {registrationFeeDue > 0 ? "Registration fee" : "Payment reminder"}
           </p>
           <h2 className="mt-1 font-headline text-base font-bold text-on-surface">
-            Your next savings payment is coming up
+            {registrationFeeDue > 0
+              ? "Confirm your registration payment to activate your hands"
+              : "Your next savings payment is coming up"}
           </h2>
           <p className="mt-1 font-body text-sm text-on-surface-variant">
-            Keep money in your Elevate Wallet so your scheduled payment can go
-            through.
+            {registrationFeeDue > 0
+              ? `Registration fees totaling ${new Intl.NumberFormat("en-NG", {
+                  style: "currency",
+                  currency: "NGN",
+                  maximumFractionDigits: 0,
+                }).format(registrationFeeDue)} are awaiting confirmation.`
+              : "Keep money in your Elevate Wallet so your scheduled payment can go through."}
           </p>
         </div>
       </div>

@@ -14,14 +14,21 @@ import HandsList from "./HandsList";
 interface Props {
   savings: SavingsPackage;
   onView: (item: SavingsPackage) => void;
+  onActivate: (item: SavingsPackage) => void;
+  isActivating: boolean;
 }
 
-export default function SavingsCard({ savings, onView }: Props) {
+export default function SavingsCard({ savings, onView, onActivate, isActivating }: Props) {
   const saved = getSavedAmount(savings);
   const target = getTargetAmount(savings);
-  const missedCount = savings.hands.filter(
-    (hand) => hand.status === "payment-missed"
+  const missedCount = savings.hands.filter((hand) => hand.status === "payment-missed").length;
+  const pendingActivationCount = savings.hands.filter(
+    (hand) => hand.status === "pending-activation"
   ).length;
+  const canActivate = savings.name === "Pinnacle" && pendingActivationCount > 0;
+  const onTrackCount = savings.hands.filter((hand) => hand.status === "on-track").length;
+  const statusLabel =
+    savings.status === "pending-activation" ? "Pending activation" : savings.status;
 
   return (
     <article className="space-y-4 rounded-2xl border border-surface-container-low bg-surface-container-lowest p-5 shadow-sm sm:p-6">
@@ -39,9 +46,9 @@ export default function SavingsCard({ savings, onView }: Props) {
             </h2>
           </div>
           <p className="mt-1 font-body text-xs text-outline">
-            {savings.name === "Pinnacle"
-              ? "Weekly savings"
-              : "Monthly savings for household food security"}
+            {pendingActivationCount > 0
+              ? `${pendingActivationCount} ${pendingActivationCount === 1 ? "hand" : "hands"} awaiting registration fee confirmation`
+              : `${savings.frequency} savings for ${savings.name === "Pinnacle" ? "your goals" : "household food security"}`}
           </p>
         </div>
 
@@ -50,12 +57,20 @@ export default function SavingsCard({ savings, onView }: Props) {
             {savings.hands.length} Hands
           </span>
           <span className="rounded-full bg-secondary-container px-3 py-1 font-label-xs text-xs font-bold capitalize text-on-secondary-fixed-variant">
-            {savings.status}
+            {statusLabel}
           </span>
         </div>
       </header>
 
       <SavingsProgress savings={savings} />
+
+      {savings.registrationFeeDue > 0 && (
+        <p className="rounded-lg border border-tertiary-fixed-dim/50 bg-tertiary-fixed/30 p-3 font-body text-sm text-on-surface">
+          Registration fee due:{" "}
+          <strong>{formatMoney(savings.registrationFeeDue)}</strong>. Hands activate after
+          payment confirmation.
+        </p>
+      )}
 
       <section className="space-y-3 rounded-xl border border-surface-container-high bg-surface-container-low p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -71,8 +86,10 @@ export default function SavingsCard({ savings, onView }: Props) {
             }`}
           >
             {missedCount
-              ? `${savings.hands.length - missedCount} on track · ${missedCount} needs attention`
-              : `${savings.hands.length} of ${savings.hands.length} on track`}
+              ? `${onTrackCount} on track · ${missedCount} need attention${pendingActivationCount > 0 ? ` · ${pendingActivationCount} pending` : ""}`
+              : pendingActivationCount > 0
+                ? `${onTrackCount} active · ${pendingActivationCount} pending`
+                : `${onTrackCount} of ${savings.hands.length} on track`}
           </span>
         </div>
 
@@ -83,17 +100,33 @@ export default function SavingsCard({ savings, onView }: Props) {
         <div className="flex items-start gap-2 font-body text-xs text-outline">
           <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-secondary" />
           <span>
-            Payments are taken automatically from your Elevate Wallet.
+            {savings.status === "pending-activation"
+              ? "Contribution payments begin after your registration fee is confirmed."
+              : "Payments are taken automatically from your Elevate Wallet."}
             {savings.benefit ? ` ${savings.benefit}.` : ""}
           </span>
         </div>
 
         <button
           onClick={() => onView(savings)}
-          className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 font-label-md text-sm font-bold text-on-primary transition hover:bg-primary-container"
+          className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-3 font-label-md text-sm font-bold transition ${
+            canActivate
+              ? "border border-primary/30 bg-surface-container-low text-primary hover:bg-surface-container-high"
+              : "bg-primary text-on-primary hover:bg-primary-container"
+          }`}
         >
           View Hands <ArrowRight size={16} />
         </button>
+        {canActivate && (
+          <button
+            type="button"
+            onClick={() => onActivate(savings)}
+            disabled={isActivating}
+            className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 font-label-md text-sm font-bold text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isActivating ? "Activating..." : "Activate Pinnacle"}
+          </button>
+        )}
       </div>
 
       <div className="hidden">

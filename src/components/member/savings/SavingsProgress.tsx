@@ -58,18 +58,22 @@ export default function SavingsProgress({ savings }: Props) {
       </div>
 
       <div className="space-y-1 border-t border-surface-container-low pt-3">
-        <p className="font-label-xs text-xs font-semibold text-on-surface">
-          Next payment: {formatMoney(nextPayment)}
-          <span className="font-body font-normal text-on-surface-variant">
-            {" "}
-            ({savings.hands.length} hands × {formatMoney(savings.handAmount)}{" "}
-            {savings.frequency.toLowerCase()})
-          </span>
-        </p>
+        {savings.status !== "pending-activation" && (
+          <p className="font-label-xs text-xs font-semibold text-on-surface">
+            Next payment: {formatMoney(nextPayment)}
+            <span className="font-body font-normal text-on-surface-variant">
+              {" "}
+              ({savings.hands.length} hands × {formatMoney(savings.handAmount)}{" "}
+              {savings.frequency.toLowerCase()})
+            </span>
+          </p>
+        )}
         <p className="font-body text-[11px] text-outline">
           {savings.nextPaymentDate
-            ? `Next payment date: ${savings.nextPaymentDate}.`
-            : "Your next payment date will appear here."}
+            ? `Next payment date: ${new Date(savings.nextPaymentDate).toLocaleDateString("en-NG")}.`
+            : savings.status === "pending-activation"
+              ? "The contribution schedule will be available after registration fee confirmation."
+              : "Your next payment date will appear here."}
         </p>
       </div>
     </section>

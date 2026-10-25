@@ -38,3 +38,12 @@ export const refreshToken = async (data: { refreshToken: string }) => {
     throw new Error(e.response.data.message ?? e.message);
   }
 };
+
+export const logOut = async (data: { refreshToken: string }) => {
+  try {
+    const res = await api.post(`${ENDPOINTS.logout}`, data);
+    return res.data;
+  } catch (e: any) {
+    throw new Error(e.response.data.message ?? e.message);
+  }
+};

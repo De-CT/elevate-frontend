@@ -39,7 +39,7 @@ export default function SavingsFilters({
         <span className="shrink-0 font-label-xs text-xs font-bold text-outline">
           Status:
         </span>
-        {(["active", "completed", "all"] as StatusFilter[]).map((value) => (
+        {(["active", "pending-activation", "completed", "all"] as StatusFilter[]).map((value) => (
           <button
             key={value}
             onClick={() => onStatusChange(value)}
@@ -47,7 +47,9 @@ export default function SavingsFilters({
           >
             {value === "all"
               ? "All Status"
-              : value.charAt(0).toUpperCase() + value.slice(1)}
+              : value === "pending-activation"
+                ? "Pending Activation"
+                : value.charAt(0).toUpperCase() + value.slice(1)}
           </button>
         ))}
       </div>

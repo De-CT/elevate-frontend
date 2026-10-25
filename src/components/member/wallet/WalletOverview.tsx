@@ -1,3 +1,5 @@
+import { simulateDeposit } from "@/backend/user";
+import { useUserStore } from "@/store/useUserStore";
 import { Clock3, Info, Wallet } from "lucide-react";
 
 type Props = {
@@ -20,6 +22,7 @@ export default function WalletOverview({
   onAddMoney,
   onHistory,
 }: Props) {
+  const { user } = useUserStore()
   return (
     <section className="flex h-full flex-col justify-between rounded-2xl border border-surface-container-low bg-surface-container-lowest p-5 shadow-sm sm:p-6">
       <div>
@@ -83,6 +86,13 @@ export default function WalletOverview({
           </div>
         </div>
       </div>
+      <button
+        onClick={async() => await simulateDeposit({ accountNumber: user?.virtualAccount.accountNumber as string, amount: 50000 })}
+        className="flex items-center gap-1.5 rounded-lg bg-primary mt-4 px-3 py-2 font-label-xs text-xs font-semibold text-white hover:bg-surface-container-high"
+      >
+        <Clock3 size={14} color="white" />
+        Simulate deposit
+      </button>
 
     </section>
   );

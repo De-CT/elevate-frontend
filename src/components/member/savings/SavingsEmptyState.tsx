@@ -1,5 +1,10 @@
 import { ArrowRight, HandCoins, ShoppingBasket, Store, Wallet } from "lucide-react";
 import type { Package } from "@/store/useAppStore";
+import {
+  formatPackageDuration,
+  getOccurrenceAdjective,
+  getOccurrenceUnit,
+} from "@/utils/package-format";
 
 interface Props {
   hasSavings: boolean;
@@ -91,10 +96,11 @@ export default function SavingsEmptyState({
                           <p className="mt-1 font-body text-xs leading-relaxed text-on-surface-variant">
                             {isChopBeta
                               ? "Structured food security savings with foodstuff fulfillment."
-                              : "Flexible weekly savings for business and personal goals."}
+                              : `Flexible ${getOccurrenceAdjective(program.occurrence)} savings for business and personal goals.`}
                           </p>
                           <p className="mt-2 font-label-xs text-xs font-semibold text-secondary">
-                            {money(program.weeklyAmount)} per week · {program.durationWeeks} weeks
+                            {money(program.contributionAmount)} per {getOccurrenceUnit(program.occurrence)} ·{" "}
+                            {formatPackageDuration(program.duration, program.occurrence)}
                           </p>
                         </div>
                       </div>

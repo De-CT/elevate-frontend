@@ -1,77 +1,59 @@
 import type { SavingsPackage } from "./savings-types";
-import {
-  formatMoney,
-  getNextPayment,
-  getPeriodLabel,
-  getProgress,
-  getSavedAmount,
-  getTargetAmount,
-} from "./savings-utils";
+import { formatMoney, getPeriodLabel } from "./savings-utils";
 
-interface Props {
-  savings: SavingsPackage;
-}
-
-export default function SavingsProgress({ savings }: Props) {
-  const saved = getSavedAmount(savings);
-  const target = getTargetAmount(savings);
-  const progress = getProgress(savings);
-  const nextPayment = getNextPayment(savings);
+export default function HandsList({ savings }: { savings: SavingsPackage }) {
   const period = getPeriodLabel(savings.frequency);
 
   return (
-    <section className="space-y-4 rounded-xl border border-surface-container-low bg-surface p-4 sm:p-5">
-      <div>
-        <p className="font-label-xs text-xs font-medium text-outline">
-          Total package progress
-        </p>
-        <div className="mt-1 flex flex-wrap items-baseline gap-2">
-          <span className="font-currency-card text-2xl font-bold text-primary sm:text-3xl">
-            {formatMoney(saved)}
-          </span>
-          <span className="font-label-md text-sm font-semibold text-outline">
-            / {formatMoney(target)} target
-          </span>
-        </div>
-      </div>
-
-      <div>
-        <div className="mb-2 flex justify-between gap-3 text-xs font-semibold">
-          <span className="text-on-surface-variant">
-            {savings.completedPeriods} of {savings.duration} {period} completed
-          </span>
-          <span className="font-label-md text-primary">{progress}%</span>
-        </div>
-        <div
-          className="h-2.5 overflow-hidden rounded-full bg-surface-container-high"
-          role="progressbar"
-          aria-valuenow={progress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Savings progress"
+    <ul className="divide-y divide-surface-container-low">
+      {savings.hands.map((hand) => (
+        <li
+          key={hand.id}
+          className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
         >
-          <div
-            className="h-full rounded-full bg-secondary-accent transition-all"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
-
-      <div className="space-y-1 border-t border-surface-container-low pt-3">
-        <p className="font-label-xs text-xs font-semibold text-on-surface">
-          Next payment: {formatMoney(nextPayment)}
-          <span className="font-body font-normal text-on-surface-variant">
-            {" "}
-            ({savings.hands.length} hands × {formatMoney(savings.handAmount)}{" "}
-            {savings.frequency.toLowerCase()})
-          </span>
-        </p>
-        <p className="font-body text-[11px] text-outline">
-          {savings.nextPaymentDate
-            ? `Next payment date: ${savings.nextPaymentDate}.`
-            : "Your next payment date will appear here."}
-        </p>
-      </div>
-    </section>
+          <div>
+            <p className="font-label-md text-sm font-semibold text-on-surface">
+              Hand {hand.handNumber}
+            </p>
+            <p className="font-body text-xs text-on-surface-variant">
+              {hand.completedPeriods} of {savings.duration} {period} completed
+              {hand.missedCycles > 0 ? ` · ${hand.missedCycles} missed` : ""}
+            </p>
+            {hand.activatedAt && (
+              <p className="font-body text-[11px] text-outline">
+                Activated {new Date(hand.activatedAt).toLocaleDateString("en-NG")}
+              </p>
+            )}
+            {hand.maturedAt && (
+              <p className="font-body text-[11px] text-outline">
+                Matured {new Date(hand.maturedAt).toLocaleDateString("en-NG")}
+              </p>
+            )}
+          </div>
+          <div className="text-right">
+            <p className="font-label-md text-sm font-semibold text-on-surface">
+              {formatMoney(hand.savedAmount)} saved
+            </p>
+            <p className="font-body text-xs text-outline">
+              {hand.status === "on-track"
+                ? "Active"
+                : hand.status === "payment-missed" || hand.missedCycles > 0
+                  ? "Needs attention"
+                  : hand.status === "pending-activation"
+                    ? "Pending activation"
+                    : "Completed"}
+            </p>
+            {hand.nextDue && (
+              <p className="mt-1 font-body text-[11px] text-outline">
+                Due {formatMoney(Number(hand.nextDue.amount))}
+                {Number(hand.nextDue.lateFee) > 0
+                  ? ` + ${formatMoney(Number(hand.nextDue.lateFee))} late fee`
+                  : ""}
+              </p>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }

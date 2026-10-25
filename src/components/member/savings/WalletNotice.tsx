@@ -3,11 +3,12 @@ import Link from "next/link";
 import { formatMoney } from "./savings-utils";
 
 interface Props {
-  walletBalance: number;
+  walletBalance: number | null;
+  walletError?: string | null;
   onManageWallet?: () => void;
 }
 
-export default function WalletNotice({ walletBalance }: Props) {
+export default function WalletNotice({ walletBalance, walletError }: Props) {
   return (
     <section className="flex flex-col justify-between gap-3 rounded-2xl border border-secondary-accent/30 bg-surface-container-low/70 p-4 sm:flex-row sm:items-center sm:p-5">
       <div className="flex items-start gap-3">
@@ -15,12 +16,12 @@ export default function WalletNotice({ walletBalance }: Props) {
           <Info size={18} />
         </span>
         <p className="font-body text-sm leading-relaxed text-on-surface-variant">
-          Savings payments are taken automatically from your Elevate Wallet.
-          Money available:{" "}
-          <strong className="font-currency-card text-primary">
-            {formatMoney(walletBalance)}
-          </strong>
-          .
+          {walletError
+            ? walletError
+            : walletBalance === null
+              ? "Checking your Elevate Wallet balance..."
+              : <>Savings payments are taken automatically from your Elevate Wallet. Money available:{" "}
+                <strong className="font-currency-card text-primary">{formatMoney(walletBalance)}</strong>.</>}
         </p>
       </div>
 

@@ -21,11 +21,20 @@ export default function AuthGuard({ children, mode = "member" }: AuthGuardProps)
             await useAppStore.persist.rehydrate();
             const profile = await restoreAuthenticatedProfile();
             console.log(profile)
+            const registrationDraft = useAppStore.getState().registrationDraft;
+            const hasPendingRegistration = registrationDraft?.userId === profile?.id;
+
             if (!profile) {
                 router.replace("/login");
-            } else if (profile.kycStatus === "VERIFIED" && mode === "completion") {
+            } else if (
+                profile.kycStatus === "VERIFIED" &&
+                mode === "completion" &&
+                !hasPendingRegistration
+            ) {
                 router.replace("/dashboard");
             } else if (profile.kycStatus !== "VERIFIED" && mode === "member") {
+                router.replace("/complete-registration");
+            } else if (mode === "member" && hasPendingRegistration) {
                 router.replace("/complete-registration");
             } else {
                 setChecked(true);
