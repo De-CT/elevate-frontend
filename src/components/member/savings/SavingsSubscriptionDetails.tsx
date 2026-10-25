@@ -228,8 +228,8 @@ export default function SavingsSubscriptionDetails({ subscriptionId }: Props) {
                       {hand.nextDue && (
                         <p className="mt-1 text-xs text-on-surface-variant">
                           Next due: {formatMoney(Number(hand.nextDue.amount))}
-                          {hand.nextDue.date
-                            ? ` · ${new Date(hand.nextDue.date).toLocaleDateString("en-NG")}`
+                          {Number(hand.nextDue.lateFee) > 0
+                            ? ` + ${formatMoney(Number(hand.nextDue.lateFee))} late fee`
                             : ""}
                         </p>
                       )}
