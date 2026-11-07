@@ -550,7 +550,7 @@ function HandRow({
             <p className="mt-0.5 text-xs text-on-surface-variant">
               {overdue ? (
                 <span className="font-semibold text-error">
-                  {formatMoney(overdue.amount)} overdue
+                  {formatMoney(toNumber(overdue.amount))} overdue
                 </span>
               ) : (
                 <>
@@ -620,10 +620,12 @@ function HandRow({
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-base font-bold text-error">{formatMoney(overdue.amount)}</p>
+                  <p className="text-base font-bold text-error">
+                    {formatMoney(toNumber(overdue.amount))}
+                  </p>
                   {toNumber(overdue.lateFee) > 0 && (
                     <p className="text-[11px] text-on-error-container">
-                      Includes {formatMoney(overdue.lateFee)} late fee
+                      Includes {formatMoney(toNumber(overdue.lateFee))} late fee
                     </p>
                   )}
                 </div>
@@ -639,11 +641,11 @@ function HandRow({
               </div>
               <div className="text-right">
                 <p className="text-sm font-bold text-on-surface">
-                  {formatMoney(hand.nextDue.amount)}
+                  {formatMoney(toNumber(hand.nextDue.amount))}
                 </p>
                 {toNumber(hand.nextDue.lateFee) > 0 && (
                   <p className="text-[11px] text-outline">
-                    Includes {formatMoney(hand.nextDue.lateFee)} late fee
+                    Includes {formatMoney(toNumber(hand.nextDue.lateFee))} late fee
                   </p>
                 )}
               </div>
