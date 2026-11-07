@@ -18,12 +18,12 @@ import SavingsFilters from "./SavingsFilters";
 import SavingsList from "./SavingsList";
 import SavingsEmptyState from "./SavingsEmptyState";
 import StartSavingsModal from "./StartSavingsModal";
-import SavingsDetailsModal from "./SavingsDetailsModal";
 import {
   claimSubscription,
   getWallet,
   listPackages,
   listSubscriptions,
+  retryOverDuePayment,
   subscribeToPackage,
 } from "@/backend/user";
 import {
@@ -42,6 +42,7 @@ export default function SavingsPage() {
   const [walletError, setWalletError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activatingSubscriptionId, setActivatingSubscriptionId] = useState<string | null>(null);
+  const [retryingSubscriptionId, setRetryingSubscriptionId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [pendingClaims, setPendingClaims] = useState<RegistrationSubscription[] | null>(null);
   const [pendingClaimPackageType, setPendingClaimPackageType] =
@@ -57,8 +58,6 @@ export default function SavingsPage() {
   const [packagesError, setPackagesError] = useState(false);
   const [programFilter, setProgramFilter] = useState<ProgramFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("active");
-  const [selectedSavings, setSelectedSavings] =
-    useState<SavingsPackage | null>(null);
   const [showStartModal, setShowStartModal] = useState(false);
   const [selectedProgramType, setSelectedProgramType] = useState<Package["type"] | null>(null);
   const router = useRouter();
@@ -159,11 +158,7 @@ export default function SavingsPage() {
         throw new Error("This subscription is not eligible for activation.");
       }
 
-      if (subscription.hands.length > 1) {
-        await claimSubscription({ groupId: subscription.id });
-      } else {
-        await claimSubscription({ subscriptionId: subscription.id });
-      }
+      await claimSubscription({ subscriptionId: subscription.id });
 
       toast.success("Your Pinnacle registration was claimed.");
 
@@ -200,6 +195,46 @@ export default function SavingsPage() {
       toast.error(message);
     } finally {
       setActivatingSubscriptionId(null);
+    }
+  };
+
+  const handleRetryOverduePayment = async (subscription: SavingsPackage) => {
+    setRetryingSubscriptionId(subscription.id);
+    try {
+      await retryOverDuePayment(subscription.id);
+      toast.success("Missed payment retry submitted.");
+
+      try {
+        const refreshedSubscriptions = await listSubscriptions();
+        setSubscriptions(refreshedSubscriptions);
+        setSubscriptionsError(null);
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? `Payment retry was submitted, but savings could not be refreshed: ${error.message}`
+            : "Payment retry was submitted, but savings could not be refreshed."
+        );
+      }
+
+      try {
+        const wallet = await getWallet();
+        const balance = Number(wallet.availableBalance);
+        if (!Number.isFinite(balance)) {
+          throw new Error("The wallet response did not include a valid available balance.");
+        }
+        setWalletBalance(balance);
+        setWalletError(null);
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? `Payment retry was submitted, but the wallet balance could not be refreshed: ${error.message}`
+            : "Payment retry was submitted, but the wallet balance could not be refreshed."
+        );
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to retry the missed payment.");
+    } finally {
+      setRetryingSubscriptionId(null);
     }
   };
 
@@ -255,11 +290,9 @@ export default function SavingsPage() {
       let remainingClaims = claims;
       while (remainingClaims.length > 0) {
         const [subscription, ...remaining] = remainingClaims;
-        if (subscription.hands && subscription.hands.length > 1) {
-          await claimSubscription({ groupId: subscription.id });
-        } else {
-          await claimSubscription({ subscriptionId: subscription.id });
-        }
+
+        await claimSubscription({ subscriptionId: subscription.id });
+
         remainingClaims = remaining;
         setPendingClaims(remainingClaims);
       }
@@ -330,6 +363,10 @@ export default function SavingsPage() {
     setShowStartModal(true);
   };
 
+  const handleViewSavings = (item: SavingsPackage) => {
+    router.push(`/savings/${item.id}`);
+  };
+
   return (
     <>
       <main className="mx-auto w-full max-w-6xl space-y-6 p-4 sm:p-6 lg:p-8">
@@ -384,9 +421,11 @@ export default function SavingsPage() {
         ) : filteredSavings.length > 0 ? (
           <SavingsList
             savings={filteredSavings}
-            onView={setSelectedSavings}
+            onView={handleViewSavings}
             onActivate={handleActivateSubscription}
             activatingSubscriptionId={activatingSubscriptionId}
+            onRetry={(subscription) => void handleRetryOverduePayment(subscription)}
+            retryingSubscriptionId={retryingSubscriptionId}
           />
         ) : (
           <SavingsEmptyState
@@ -409,11 +448,6 @@ export default function SavingsPage() {
         packages={activePackages ?? []}
         selectedProgramType={selectedProgramType}
         onSelectProgram={setSelectedProgramType}
-      />
-
-      <SavingsDetailsModal
-        savings={selectedSavings}
-        onClose={() => setSelectedSavings(null)}
       />
 
     </>

@@ -6,6 +6,10 @@ export type SubscriptionDue = {
   lateFee?: string;
 };
 
+export type SubscriptionOverdue = SubscriptionDue & {
+  cycles: number;
+};
+
 export type SubscriptionHand = {
   id: string;
   handNumber: number;
@@ -15,6 +19,7 @@ export type SubscriptionHand = {
   activatedAt: string | null;
   maturedAt: string | null;
   nextDue: SubscriptionDue | null;
+  overdue?: SubscriptionOverdue | null;
 };
 
 export type Subscription = {

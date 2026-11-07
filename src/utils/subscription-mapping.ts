@@ -14,14 +14,17 @@ export function toSavingsPackage(subscription: Subscription): SavingsPackage {
     activatedAt: hand.activatedAt,
     maturedAt: hand.maturedAt,
     status:
-      hand.status === "ACTIVE"
+      (hand.overdue?.cycles ?? 0) > 0 ||
+      hand.status === "MISSED" ||
+      hand.status === "PAYMENT_MISSED"
+        ? "payment-missed"
+        : hand.status === "ACTIVE"
         ? "on-track"
         : hand.status === "MATURED" || hand.status === "COMPLETED"
           ? "completed"
-          : hand.status === "MISSED" || hand.status === "PAYMENT_MISSED"
-            ? "payment-missed"
-            : "pending-activation",
+          : "pending-activation",
     nextDue: hand.nextDue,
+    overdue: hand.overdue,
   }));
 
   const allCompleted = hands.length > 0 && hands.every((hand) => hand.status === "completed");
@@ -38,7 +41,7 @@ export function toSavingsPackage(subscription: Subscription): SavingsPackage {
           (total, hand) =>
             total +
             toAmount(hand.nextDue?.amount) +
-            toAmount(hand.nextDue?.lateFee),
+              toAmount(hand.overdue?.amount),
           0
         );
 

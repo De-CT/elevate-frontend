@@ -40,6 +40,7 @@ export default function TransactionDetailsModal({
     ["Status", transaction.status],
     ["Reference Code", transaction.reference],
     ["Payment Method", transaction.method],
+    ...(transaction.sourceId ? [["Source reference", transaction.sourceId] as [string, string]] : []),
   ];
 
   return (

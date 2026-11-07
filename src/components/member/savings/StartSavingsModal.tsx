@@ -110,13 +110,12 @@ export default function StartSavingsModal({
                     onClick={() => onSelectProgram(item.type)}
                     disabled={isSubmitting || isSelectionLocked}
                     aria-pressed={selected}
-                    className={`relative flex flex-col rounded-2xl border-2 p-5 text-left transition ${
-                      selected
-                        ? itemIsPinnacle
-                          ? "border-primary-container shadow-sm"
-                          : "border-tertiary shadow-sm"
-                        : "border-surface-container hover:border-secondary-accent"
-                    }`}
+                    className={`relative flex flex-col rounded-2xl border-2 p-5 text-left transition ${selected
+                      ? itemIsPinnacle
+                        ? "border-primary-container shadow-sm"
+                        : "border-tertiary shadow-sm"
+                      : "border-surface-container hover:border-secondary-accent"
+                      }`}
                   >
                     <span className="flex w-full items-center justify-between gap-2">
                       <span className={`font-headline text-xl font-bold ${itemIsPinnacle ? "text-primary" : "text-tertiary"}`}>
@@ -156,7 +155,7 @@ export default function StartSavingsModal({
               <p className="mt-1 font-body text-xs text-on-surface-variant">
                 Enter the number of {program ?? "program"} hands you want.
               </p>
-              <div className="mt-4 flex items-center gap-3">
+              <div className="mt-4 flex items-center gap-3 w-full">
                 <button
                   type="button"
                   onClick={() => setHandsInput(String(Math.max(1, (hands ?? 1) - 1)))}
@@ -177,7 +176,7 @@ export default function StartSavingsModal({
                   onChange={(event) => setHandsInput(event.target.value)}
                   aria-invalid={hands === null}
                   aria-describedby="savings-hands-help"
-                  className="h-11 min-w-0 flex-1 rounded-lg border-2 border-primary-container bg-surface-container-lowest text-center font-headline text-xl font-bold text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="h-11 min-w-0 flex-1 w-full rounded-lg border-2 border-primary-container bg-surface-container-lowest text-center font-headline text-xl font-bold text-primary focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <button
                   type="button"
@@ -208,12 +207,12 @@ export default function StartSavingsModal({
                 <SummaryRow label="Duration" value={formatPackageDuration(duration, occurrence)} />
                 <SummaryRow
                   label="Registration fee"
-                  value={hands === null ? "—" : registrationFee > 0 ? formatMoney(registrationFee) : "Free"}
+                  value={hands === null ? "—" : registrationFee > 0 ? `${formatMoney(registrationFee)} (${hands} × ${formatMoney(registrationFee / hands)})` : "Free"}
                 />
                 {isPinnacle && (
                   <>
-                    <SummaryRow label="Clearance fee" value={hands === null ? "—" : formatMoney(clearanceFee)} />
-                    <SummaryRow label="Potential referral bonus" value={hands === null ? "—" : formatMoney(referralBonus)} />
+                    <SummaryRow label="Clearance fee" value={hands === null ? "—" : `${formatMoney(clearanceFee)} (${hands} × ${formatMoney(clearanceFee / hands)})`} />
+                    <SummaryRow label="Potential referral bonus" value={hands === null ? "—" : `${formatMoney(referralBonus)} (${hands} × ${formatMoney(referralBonus / hands)})`} />
                   </>
                 )}
                 <div className="flex justify-between gap-3 border-t border-surface-container pt-2">

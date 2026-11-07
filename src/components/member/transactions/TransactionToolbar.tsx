@@ -5,7 +5,7 @@ import { ShieldCheck } from "lucide-react";
 interface Props {
   filter: "all" | TransactionType;
   onFilterChange: (value: "all" | TransactionType) => void;
-  counts: { all: number; added: number; savings: number };
+  counts: { all: number; added: number; savings: number; other: number };
 }
 
 export default function TransactionToolbar({

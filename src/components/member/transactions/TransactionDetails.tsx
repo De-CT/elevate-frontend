@@ -1,7 +1,6 @@
 import {
   ArrowDownLeft,
-  CheckCircle2,
-  PiggyBank,
+  ArrowUpRight,
   ShieldCheck,
   Wallet,
 } from "lucide-react";
@@ -27,7 +26,7 @@ export default function TransactionDetails({ transaction }: Props) {
     );
   }
 
-  const isAdded = transaction.type === "added";
+  const isCredit = transaction.direction === "CREDIT";
 
   return (
     <div className="flex flex-col gap-4">
@@ -38,36 +37,24 @@ export default function TransactionDetails({ transaction }: Props) {
               Transaction Overview
             </p>
             <h2 className="mt-1 font-display text-xl font-semibold text-primary">
-              {isAdded ? "Wallet Funding" : "Savings Payment"}
+              {transaction.title}
             </h2>
           </div>
 
-          <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${
-            transaction.status === "failed"
-              ? "bg-error-container text-on-error-container"
-              : transaction.status === "pending"
-                ? "bg-tertiary-fixed/40 text-tertiary"
-                : transaction.status === "unknown"
-                  ? "bg-surface-container text-on-surface-variant"
-                  : "bg-secondary text-on-secondary"
-          }`}>
-            {transaction.status === "successful" || transaction.status === "paid" ? <CheckCircle2 size={13} /> : null}
-            {transaction.status === "paid" ? "Paid" : transaction.status === "successful" ? "Successful" : transaction.status === "pending" ? "Pending" : transaction.status === "failed" ? "Failed" : "Status unavailable"}
-          </span>
         </div>
 
         <div className="my-4 rounded-xl bg-surface-container-low p-5 text-center">
           <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-            {isAdded ? "Amount Added" : "Amount Paid"}
+            {isCredit ? "Amount Credited" : "Amount Debited"}
           </p>
           <p className="mt-1 font-display text-3xl font-bold tabular-nums text-primary">
-            {formatNaira(transaction.amount)}
+            {isCredit ? "+" : "-"}{formatNaira(transaction.amount)}
           </p>
           <p className="mt-2 inline-flex items-center gap-1 text-xs text-on-surface-variant">
-            {isAdded ? (
+            {isCredit ? (
               <ArrowDownLeft size={15} className="text-secondary" />
             ) : (
-              <PiggyBank size={15} className="text-secondary" />
+              <ArrowUpRight size={15} className="text-primary" />
             )}
             {transaction.program}
             {transaction.contributionLabel

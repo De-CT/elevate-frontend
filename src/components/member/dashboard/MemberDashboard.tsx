@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { HandCoins, Plus, Wallet } from "lucide-react";
+import { AlertCircle, HandCoins, Plus, RotateCw, Wallet } from "lucide-react";
 import { WalletSummary } from "./WalletSummary";
 import { PaymentReminder } from "./PaymentReminder";
 import { SavingsSection } from "./SavingsSection";
@@ -17,6 +17,7 @@ export type DashboardSavingsPlan = {
     hands: number;
     handsOnTrack: number;
     handsNeedingAttention: number;
+    overdueHands: number;
     saved: number;
     target: number;
     currentPeriod: number;
@@ -27,6 +28,8 @@ export type DashboardSavingsPlan = {
     benefitLabel: string;
     registrationFeeDue: number;
     pendingHands: number;
+    overdueTotal: number;
+    overdueLateFees: number;
     nextPaymentDate?: string;
     status: "Active" | "Completed" | "Needs Attention" | "Pending Activation";
 };
@@ -36,13 +39,22 @@ type DashboardUser = UserProfile & {
 };
 
 const amount = (value: string | undefined) => Number(value ?? 0);
+const formatNaira = (value: number) =>
+    new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        maximumFractionDigits: 0,
+    }).format(value);
 
 function toDashboardPlan(subscription: Subscription): DashboardSavingsPlan {
     const contributionAmount = amount(subscription.package.contributionAmount);
     const hands = subscription.hands;
     const pendingHands = hands.filter((hand) => hand.status === "PENDING_ACTIVATION").length;
     const attentionHands = hands.filter(
-      (hand) => hand.status === "MISSED" || hand.status === "PAYMENT_MISSED"
+      (hand) =>
+        hand.status === "MISSED" ||
+        hand.status === "PAYMENT_MISSED" ||
+        (hand.overdue?.cycles ?? 0) > 0
     ).length;
     const completedHands = hands.filter(
       (hand) => hand.status === "MATURED" || hand.status === "COMPLETED"
@@ -57,7 +69,7 @@ function toDashboardPlan(subscription: Subscription): DashboardSavingsPlan {
         ? amount(subscription.nextDue.amount)
         : hands.reduce(
             (total, hand) =>
-              total + amount(hand.nextDue?.amount) + amount(hand.nextDue?.lateFee),
+              total + amount(hand.nextDue?.amount) + amount(hand.overdue?.amount),
             0
           );
 
@@ -65,8 +77,19 @@ function toDashboardPlan(subscription: Subscription): DashboardSavingsPlan {
       id: subscription.id,
       packageName: subscription.package.name,
       hands: hands.length,
-      handsOnTrack: hands.filter((hand) => hand.status === "ACTIVE").length,
+      handsOnTrack: hands.filter(
+        (hand) => hand.status === "ACTIVE" && (hand.overdue?.cycles ?? 0) === 0
+      ).length,
       handsNeedingAttention: attentionHands,
+      overdueHands: hands.filter((hand) => (hand.overdue?.cycles ?? 0) > 0).length,
+      overdueTotal: hands.reduce(
+        (total, hand) => total + amount(hand.overdue?.amount),
+        0
+      ),
+      overdueLateFees: hands.reduce(
+        (total, hand) => total + amount(hand.overdue?.lateFee),
+        0
+      ),
       saved,
       target: hands.length * contributionAmount * subscription.package.duration,
       currentPeriod: hands.length ? Math.min(...hands.map((hand) => hand.cyclesCompleted)) : 0,
@@ -102,6 +125,8 @@ export function MemberDashboard({
     walletError,
     onActivateSubscription,
     activatingSubscriptionId,
+    onRetryOverduePayment,
+    retryingSubscriptionId,
 }: {
     subscriptions: Subscription[];
     subscriptionsLoading: boolean;
@@ -110,9 +135,12 @@ export function MemberDashboard({
     walletError: string | null;
     onActivateSubscription: (id: string) => void;
     activatingSubscriptionId: string | null;
+    onRetryOverduePayment: (id: string) => void;
+    retryingSubscriptionId: string | null;
 }) {
     const user = useUserStore((state) => state.user) as DashboardUser | null;
     const savingsPlans = subscriptions.map(toDashboardPlan);
+    const overduePlans = savingsPlans.filter((plan) => plan.overdueHands > 0);
     const registrationFeeDue = subscriptions.reduce(
       (total, item) => total + amount(item.registrationFeeDue),
       0
@@ -148,6 +176,46 @@ export function MemberDashboard({
 
                     <WalletSummary wallet={wallet} />
 
+                    {overduePlans.length > 0 && (
+                        <section
+                            aria-labelledby="overdue-payments-title"
+                            className="space-y-3 rounded-2xl border border-error/25 bg-error-container p-4 sm:p-5"
+                        >
+                            <div className="flex items-start gap-3">
+                                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-error" aria-hidden="true" />
+                                <div>
+                                    <h2 id="overdue-payments-title" className="font-headline font-bold text-on-error-container">
+                                        Missed savings payments
+                                    </h2>
+                                    <p className="mt-1 text-sm text-on-error-container">
+                                        Add funds to your wallet, then retry the missed payment.
+                                    </p>
+                                </div>
+                            </div>
+                            <ul className="divide-y divide-error/15">
+                                {overduePlans.map((plan) => (
+                                    <li key={plan.id} className="flex flex-col gap-3 py-3 first:pt-1 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                                        <p className="text-sm font-semibold text-on-error-container">
+                                            {plan.packageName} · {plan.overdueHands} {plan.overdueHands === 1 ? "hand" : "hands"} · {formatNaira(plan.overdueTotal)} overdue
+                                            {plan.overdueLateFees > 0
+                                                ? ` (includes ${formatNaira(plan.overdueLateFees)} late fee)`
+                                                : ""}
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={() => onRetryOverduePayment(plan.id)}
+                                            disabled={retryingSubscriptionId === plan.id}
+                                            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-error px-5 text-sm font-bold text-on-error hover:bg-error/90 disabled:cursor-not-allowed disabled:opacity-60"
+                                        >
+                                            <RotateCw className="h-4 w-4" aria-hidden="true" />
+                                            {retryingSubscriptionId === plan.id ? "Retrying..." : "Retry payment"}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+
                     <PaymentReminder
                         hasPayments={hasPaymentsDue}
                         registrationFeeDue={registrationFeeDue}
@@ -167,7 +235,7 @@ export function MemberDashboard({
                                 </p>
                             </div>
                         </div>
-                        <Link href="#" className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-primary px-5 font-label-md text-sm font-semibold text-on-primary hover:bg-primary-container">
+                        <Link href="/savings" className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-primary px-5 font-label-md text-sm font-semibold text-on-primary hover:bg-primary-container">
                             <Plus className="h-4 w-4" aria-hidden="true" />
                             Choose a Program
                         </Link>
@@ -177,6 +245,8 @@ export function MemberDashboard({
                         plans={savingsPlans}
                         onActivateSubscription={onActivateSubscription}
                         activatingSubscriptionId={activatingSubscriptionId}
+                        onRetryOverduePayment={onRetryOverduePayment}
+                        retryingSubscriptionId={retryingSubscriptionId}
                     />
 
                     <div className="grid grid-cols-1 gap-8 pt-2 lg:grid-cols-12">

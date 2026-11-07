@@ -72,11 +72,8 @@ export function RegistrationCompletionFlow() {
 
         if (draft.selection.packageType === "PINNACLE") {
             for (const subscription of subscriptions) {
-                if (subscription.hands && subscription.hands.length > 1) {
-                    await claimSubscription({ groupId: subscription.id });
-                } else {
-                    await claimSubscription({ subscriptionId: subscription.id });
-                }
+
+                await claimSubscription({ subscriptionId: subscription.id });
 
                 const currentDraft = useAppStore.getState().registrationDraft;
                 if (currentDraft?.userId === draft.userId) {

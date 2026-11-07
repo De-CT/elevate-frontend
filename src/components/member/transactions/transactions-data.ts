@@ -1,4 +1,4 @@
-import type { Transaction, TransactionStatus, TransactionType } from "./transactions-types";
+import type { Transaction, TransactionDirection, TransactionType } from "./transactions-types";
 
 type RawTransaction = Record<string, unknown>;
 
@@ -22,19 +22,28 @@ const getAmount = (record: RawTransaction) => {
 };
 
 function normalizeType(record: RawTransaction): TransactionType {
-  const rawType = getText(record, "type", "direction", "category", "transactionType").toLowerCase();
-  return /credit|deposit|top.?up|fund|add|incoming|inflow/.test(rawType)
-    ? "added"
-    : "savings";
+  const rawType = getText(record, "type", "category", "transactionType").toLowerCase();
+  if (rawType === "sweep" || /savings|contribution/.test(rawType)) return "savings";
+  if (/deposit|top.?up|fund|add/.test(rawType)) return "added";
+  if (/credit|incoming|inflow/.test(getText(record, "direction").toLowerCase())) return "added";
+  return "other";
 }
 
-function normalizeStatus(value: string): TransactionStatus {
-  const status = value.toLowerCase();
-  if (/fail|reject|revers/.test(status)) return "failed";
-  if (/pending|process/.test(status)) return "pending";
-  if (/paid/.test(status)) return "paid";
-  if (/success|complete|approved/.test(status)) return "successful";
-  return "unknown";
+function normalizeDirection(record: RawTransaction, type: TransactionType): TransactionDirection {
+  const direction = getText(record, "direction").toUpperCase();
+  if (direction === "CREDIT" || direction === "DEBIT") return direction;
+  return type === "added" ? "CREDIT" : "DEBIT";
+}
+
+function transactionTitle(record: RawTransaction, type: TransactionType) {
+  const explicitTitle = getText(record, "title", "name", "transactionName");
+  if (explicitTitle) return explicitTitle;
+
+  const transactionType = getText(record, "type").toUpperCase();
+  if (transactionType === "DEPOSIT") return "Wallet deposit";
+  if (transactionType === "SWEEP") return "Savings transfer";
+  if (transactionType === "REGISTRATION_FEE") return "Registration fee";
+  return type === "added" ? "Money Added" : type === "savings" ? "Savings Payment" : "Wallet transaction";
 }
 
 function formatDate(value: string) {
@@ -65,31 +74,45 @@ export function normalizeTransactions(response: unknown): Transaction[] {
     .filter((item): item is RawTransaction => Boolean(item) && typeof item === "object")
     .map((record, index) => {
       const type = normalizeType(record);
-      const title = getText(record, "title", "name", "transactionName", "description")
-        || (type === "added" ? "Money Added" : "Savings Payment");
+      const direction = normalizeDirection(record, type);
+      const title = transactionTitle(record, type);
       const dateValue = getText(record, "date", "createdAt", "transactionDate", "timestamp");
       const date = formatDate(dateValue);
-      const rawStatus = getText(record, "status", "state");
       const program = getText(record, "program", "packageName", "planName");
       const detail = getText(record, "details", "narration", "description");
+      const transactionKind = getText(record, "type").toUpperCase();
+      const description = transactionKind === "SWEEP"
+        ? direction === "DEBIT"
+          ? "Moved from wallet balance"
+          : "Moved into savings balance"
+        : detail && detail !== title
+          ? detail
+          : type === "added" ? "Wallet funding" : type === "savings" ? "Savings contribution" : "Wallet transaction";
+      const defaultProgram = transactionKind === "DEPOSIT"
+        ? "Wallet funding"
+        : transactionKind === "SWEEP"
+          ? "Savings transfer"
+          : transactionKind === "REGISTRATION_FEE"
+            ? "Registration fee"
+            : type === "added" ? "Wallet funding" : type === "savings" ? "Savings contribution" : "Wallet transaction";
 
       return {
         id: getText(record, "id", "transactionId", "_id") || `transaction-${index}`,
         type,
+        direction,
         title,
-        description: detail && detail !== title
-          ? detail
-          : type === "added" ? "Wallet funding" : "Savings contribution",
+        description,
         amount: getAmount(record),
-        status: normalizeStatus(rawStatus),
         date: date.date,
         dateLabel: date.dateLabel,
         plan: getText(record, "plan", "subscriptionName", "accountName") || undefined,
-        program: program || (type === "added" ? "Wallet funding" : "Savings contribution"),
+        program: program || defaultProgram,
         method: getText(record, "method", "paymentMethod", "channel") || "Not specified",
         reference: getText(record, "reference", "referenceCode", "transactionReference") || "Not provided",
         receiptReference: getText(record, "receiptReference", "receiptNumber") || undefined,
-        contributionLabel: getText(record, "contributionLabel", "periodLabel") || undefined,
+        contributionLabel: transactionKind === "SWEEP"
+          ? undefined
+          : getText(record, "contributionLabel", "periodLabel") || undefined,
       };
     })
     .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime());

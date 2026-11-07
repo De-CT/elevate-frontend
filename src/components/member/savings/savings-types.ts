@@ -16,6 +16,12 @@ export interface SavingsHand {
   nextDue: {
     amount: string;
     lateFee?: string;
+    date?: string | null;
+  } | null;
+  overdue?: {
+    cycles: number;
+    amount: string;
+    lateFee?: string;
   } | null;
 }
 

@@ -82,7 +82,7 @@ export const getWalletHistory = async () => {
 };
 
 export const claimSubscription = async (
-  data: { groupId: string; subscriptionId?: never } | { subscriptionId: string; groupId?: never }
+  data: { subscriptionId: string; groupId?: never }
 ) => {
   try {
     const res = await api.post(`${ENDPOINTS.packageRegistrationPayment}`, data);
@@ -110,6 +110,16 @@ export const getSubscription = async (id: string): Promise<Subscription> => {
   try {
     const res = await api.get<Subscription>(`${ENDPOINTS.listSubscriptions}/${id}`);
     console.log("get subscription", res.data);
+    return res.data;
+  } catch (e: any) {
+    throw new Error(e.response.data.message ?? e.message);
+  }
+};
+
+export const retryOverDuePayment = async (subscriptionId: string): Promise<Subscription> => {
+  try {
+    const res = await api.post<Subscription>(`${ENDPOINTS.subscribeToPackage}/${subscriptionId}/retry-payment`);
+    console.log("retry payment", res.data);
     return res.data;
   } catch (e: any) {
     throw new Error(e.response.data.message ?? e.message);

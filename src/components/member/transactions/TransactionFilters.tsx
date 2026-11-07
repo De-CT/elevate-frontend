@@ -3,13 +3,14 @@ import { TransactionType } from "./transactions-types";
 interface Props {
   value: "all" | TransactionType;
   onChange: (value: "all" | TransactionType) => void;
-  counts: { all: number; added: number; savings: number };
+  counts: { all: number; added: number; savings: number; other: number };
 }
 
 const filters = [
   { value: "all", label: "All" },
   { value: "added", label: "Money Added" },
   { value: "savings", label: "Savings Payments" },
+  { value: "other", label: "Other" },
 ] as const;
 
 export default function TransactionFilters({

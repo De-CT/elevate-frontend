@@ -1,10 +1,8 @@
 import {
   ArrowDownLeft,
+  ArrowUpRight,
   ArrowRight,
   Check,
-  CheckCircle2,
-  PiggyBank,
-  Store,
 } from "lucide-react";
 import { Transaction } from "./transactions-types";
 import { formatNaira } from "./transactions-data";
@@ -20,23 +18,8 @@ export default function TransactionCard({
   selected,
   onClick,
 }: Props) {
-  const isAdded = transaction.type === "added";
-  const Icon = isAdded ? ArrowDownLeft : transaction.program === "Chop Beta" ? Store : PiggyBank;
-  const statusLabel = {
-    paid: "Paid",
-    successful: "Successful",
-    pending: "Pending",
-    failed: "Failed",
-    unknown: "Status unavailable",
-  }[transaction.status];
-  const statusStyle =
-    transaction.status === "paid" || transaction.status === "successful"
-      ? "bg-secondary text-on-secondary"
-      : transaction.status === "failed"
-        ? "bg-error-container text-on-error-container"
-        : transaction.status === "pending"
-          ? "bg-tertiary-fixed/40 text-tertiary"
-          : "bg-surface-container text-on-surface-variant";
+  const isCredit = transaction.direction === "CREDIT";
+  const Icon = isCredit ? ArrowDownLeft : ArrowUpRight;
 
   return (
     <button
@@ -57,25 +40,16 @@ export default function TransactionCard({
         <div className="flex min-w-0 items-center gap-3">
           <div
             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
-              isAdded
-                ? "bg-secondary/10 text-secondary"
-                : "bg-primary/10 text-primary"
+              isCredit ? "bg-secondary/10 text-secondary" : "bg-primary/10 text-primary"
             }`}
           >
             <Icon size={22} />
           </div>
 
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-display text-base font-semibold text-primary">
-                {transaction.title}
-              </span>
-              <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${statusStyle}`}
-              >
-                {statusLabel}
-              </span>
-            </div>
+            <span className="font-display text-base font-semibold text-primary">
+              {transaction.title}
+            </span>
 
             <p className="mt-0.5 truncate text-xs text-on-surface-variant">
               {transaction.description}
@@ -89,10 +63,10 @@ export default function TransactionCard({
         <div className="flex shrink-0 flex-col items-end">
           <span
             className={`font-display text-base font-bold tabular-nums ${
-              isAdded ? "text-secondary" : "text-on-surface"
+              isCredit ? "text-secondary" : "text-on-surface"
             }`}
           >
-            {isAdded ? "+" : ""}
+            {isCredit ? "+" : "-"}
             {formatNaira(transaction.amount)}
           </span>
 

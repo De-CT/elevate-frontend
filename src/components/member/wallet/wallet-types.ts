@@ -11,6 +11,8 @@ export type WalletTransaction = {
   reference: string;
   method: string;
   details: string;
+  sourceType?: string;
+  sourceId?: string;
 };
 
 export type UpcomingPayment = {

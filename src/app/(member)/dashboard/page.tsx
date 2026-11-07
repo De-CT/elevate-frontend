@@ -1,5 +1,10 @@
 "use client"
-import { claimSubscription, getWallet, listSubscriptions } from "@/backend/user";
+import {
+    claimSubscription,
+    getWallet,
+    listSubscriptions,
+    retryOverDuePayment,
+} from "@/backend/user";
 import { MemberDashboard } from "@/components/member/dashboard/MemberDashboard";
 import type { Subscription } from "@/types/subscription";
 import { useEffect, useState } from "react";
@@ -13,6 +18,7 @@ export default function DashboardPage() {
     const [walletLoading, setWalletLoading] = useState(true);
     const [walletError, setWalletError] = useState<string | null>(null);
     const [activatingSubscriptionId, setActivatingSubscriptionId] = useState<string | null>(null);
+    const [retryingSubscriptionId, setRetryingSubscriptionId] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -78,11 +84,8 @@ export default function DashboardPage() {
 
         setActivatingSubscriptionId(subscriptionId);
         try {
-            if (subscription.hands.length > 1) {
-                await claimSubscription({ groupId: subscription.id });
-            } else {
-                await claimSubscription({ subscriptionId: subscription.id });
-            }
+
+            await claimSubscription({ subscriptionId: subscription.id });
 
             toast.success("Your Pinnacle subscription has been activated.");
             try {
@@ -114,6 +117,50 @@ export default function DashboardPage() {
         }
     };
 
+    const handleRetryOverduePayment = async (subscriptionId: string) => {
+        const subscription = subscriptions.find((item) => item.id === subscriptionId);
+        if (!subscription || !subscription.hands.some((hand) => (hand.overdue?.cycles ?? 0) > 0)) {
+            toast.error("This subscription has no missed payment to retry.");
+            return;
+        }
+
+        setRetryingSubscriptionId(subscriptionId);
+        try {
+            await retryOverDuePayment(subscription.id);
+            toast.success("Missed payment retry submitted.");
+
+            try {
+                setSubscriptions(await listSubscriptions());
+            } catch (error) {
+                toast.error(
+                    error instanceof Error
+                        ? `Retry submitted, but savings could not be refreshed: ${error.message}`
+                        : "Retry submitted, but savings could not be refreshed."
+                );
+            }
+
+            try {
+                const wallet = await getWallet();
+                const balance = Number(wallet.availableBalance);
+                if (!Number.isFinite(balance)) {
+                    throw new Error("The wallet response did not include a valid available balance.");
+                }
+                setWalletBalance(balance);
+                setWalletError(null);
+            } catch (error) {
+                toast.error(
+                    error instanceof Error
+                        ? `Retry submitted, but wallet balance could not be refreshed: ${error.message}`
+                        : "Retry submitted, but wallet balance could not be refreshed."
+                );
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Unable to retry the missed payment.");
+        } finally {
+            setRetryingSubscriptionId(null);
+        }
+    };
+
     return (
         <MemberDashboard
             subscriptions={subscriptions}
@@ -123,6 +170,8 @@ export default function DashboardPage() {
             walletError={walletError}
             onActivateSubscription={handleActivateSubscription}
             activatingSubscriptionId={activatingSubscriptionId}
+            onRetryOverduePayment={handleRetryOverduePayment}
+            retryingSubscriptionId={retryingSubscriptionId}
         />
     );
 }

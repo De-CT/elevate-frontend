@@ -36,11 +36,8 @@ export default function TransactionRow({
       <span className="min-w-0 flex-1">
         <span className="block truncate font-headline text-sm font-bold text-on-surface">
           {transaction.title}
-          {transaction.type === "out" && transaction.details
-            ? ` · ${transaction.details}`
-            : ""}
         </span>
-        <span className="mt-1 block font-body text-xs leading-relaxed text-outline">
+        <span className="mt-1 block truncate font-body text-xs leading-relaxed text-outline">
           {transaction.description}
         </span>
         <span className="mt-1 block font-body text-[11px] text-outline-variant">
@@ -59,6 +56,9 @@ export default function TransactionRow({
         </span>
         <span className="mt-1 block font-body text-[11px] text-outline-variant">
           View details →
+        </span>
+        <span className="sr-only">
+          {transaction.type === "in" ? "Credit" : "Debit"}; view details
         </span>
       </span>
     </button>

@@ -40,6 +40,8 @@ export default function WalletHistory({
           {filters.map((item) => (
             <button
               key={item.value}
+              type="button"
+              aria-pressed={filter === item.value}
               onClick={() => onFilterChange(item.value)}
               className={`shrink-0 rounded-lg px-3 py-2 font-label-xs text-xs font-bold transition ${
                 filter === item.value
@@ -52,6 +54,12 @@ export default function WalletHistory({
           ))}
         </div>
       </div>
+
+      {transactions.length > 0 && (
+        <p className="mt-4 font-label-xs text-xs text-outline" aria-live="polite">
+          {transactions.length} {transactions.length === 1 ? "transaction" : "transactions"} · newest first
+        </p>
+      )}
 
       <div className="mt-2 divide-y divide-outline-variant/30">
         {transactions.length ? (

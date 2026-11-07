@@ -5,6 +5,8 @@ import WalletPage from "@/components/member/wallet/WalletPage";
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
+import { normalizeWalletHistory } from "@/components/member/wallet/wallet-history";
+import type { WalletTransaction } from "@/components/member/wallet/wallet-types";
 
 type WalletResponse = {
     availableBalance: string | number;
@@ -13,7 +15,7 @@ type WalletResponse = {
 
 export default function Page() {
     const [wallet, setWallet] = useState<WalletResponse | null>(null);
-    const [history, setHistory] = useState<Awaited<ReturnType<typeof getWalletHistory>> | null>(null);
+    const [history, setHistory] = useState<WalletTransaction[] | null>(null);
     const [error, setError] = useState<string | null>(null);
     const user = useUserStore((state) => state.user);
 
@@ -28,7 +30,7 @@ export default function Page() {
                 ]);
                 if (cancelled) return;
                 setWallet(walletResponse as WalletResponse);
-                setHistory(historyResponse);
+                setHistory(normalizeWalletHistory(historyResponse));
             } catch (loadError) {
                 if (cancelled) return;
                 setError(loadError instanceof Error ? loadError.message : "Unable to load wallet details.");

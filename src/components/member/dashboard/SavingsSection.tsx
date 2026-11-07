@@ -9,6 +9,7 @@ type SavingsPlan = {
   hands: number;
   handsOnTrack: number;
   handsNeedingAttention: number;
+  overdueHands: number;
   saved: number;
   target: number;
   currentPeriod: number;
@@ -19,6 +20,8 @@ type SavingsPlan = {
   benefitLabel: string;
   registrationFeeDue: number;
   pendingHands: number;
+  overdueTotal: number;
+  overdueLateFees: number;
   nextPaymentDate?: string;
   status: "Active" | "Completed" | "Needs Attention" | "Pending Activation";
 };
@@ -27,10 +30,14 @@ export function SavingsSection({
   plans,
   onActivateSubscription,
   activatingSubscriptionId,
+  onRetryOverduePayment,
+  retryingSubscriptionId,
 }: {
   plans: SavingsPlan[];
   onActivateSubscription: (id: string) => void;
   activatingSubscriptionId: string | null;
+  onRetryOverduePayment: (id: string) => void;
+  retryingSubscriptionId: string | null;
 }) {
   const activeCount = plans.filter((plan) => plan.status === "Active").length;
 
@@ -65,7 +72,7 @@ export function SavingsSection({
             Choose a program to start saving towards your goals.
           </p>
           <Link
-            href="#"
+            href="/savings"
             className="mt-6 inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 font-label-md text-sm font-semibold text-on-primary hover:bg-primary-container"
           >
             <Plus className="h-5 w-5" aria-hidden="true" />
@@ -81,11 +88,13 @@ export function SavingsSection({
                 plan={plan}
                 onActivate={() => onActivateSubscription(plan.id)}
                 isActivating={activatingSubscriptionId === plan.id}
+                onRetry={() => onRetryOverduePayment(plan.id)}
+                isRetrying={retryingSubscriptionId === plan.id}
               />
             ))}
           </div>
           <Link
-            href="/packages"
+            href="/savings"
             className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-primary-fixed bg-surface-container-low px-4 py-3 font-label-md text-sm font-bold text-primary transition hover:bg-surface-container-highest"
           >
             <Plus className="h-5 w-5" />

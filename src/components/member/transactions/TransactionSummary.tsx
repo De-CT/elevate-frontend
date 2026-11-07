@@ -10,17 +10,18 @@ export default function TransactionSummary({
   transactions: Transaction[];
   walletBalance: number;
 }) {
-  const settledTransactions = transactions.filter(
-    (transaction) => transaction.status === "paid" || transaction.status === "successful"
-  );
-  const amountAdded = settledTransactions
-    .filter((transaction) => transaction.type === "added")
+  const amountAdded = transactions
+    .filter((transaction) => transaction.type === "added" && transaction.direction === "CREDIT")
     .reduce((total, transaction) => total + transaction.amount, 0);
-  const savingsPaid = settledTransactions
-    .filter((transaction) => transaction.type === "savings")
+  const savingsPaid = transactions
+    .filter((transaction) => transaction.type === "savings" && transaction.direction === "DEBIT")
     .reduce((total, transaction) => total + transaction.amount, 0);
-  const addedCount = settledTransactions.filter((transaction) => transaction.type === "added").length;
-  const savingsCount = settledTransactions.filter((transaction) => transaction.type === "savings").length;
+  const addedCount = transactions.filter(
+    (transaction) => transaction.type === "added" && transaction.direction === "CREDIT"
+  ).length;
+  const savingsCount = transactions.filter(
+    (transaction) => transaction.type === "savings" && transaction.direction === "DEBIT"
+  ).length;
 
   return (
     <section className="grid gap-4 md:grid-cols-3">

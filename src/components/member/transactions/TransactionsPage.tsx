@@ -91,6 +91,7 @@ export default function TransactionsPage() {
               all: transactions.length,
               added: transactions.filter((item) => item.type === "added").length,
               savings: transactions.filter((item) => item.type === "savings").length,
+              other: transactions.filter((item) => item.type === "other").length,
             }}
           />
 
