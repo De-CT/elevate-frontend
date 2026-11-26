@@ -61,5 +61,6 @@ export function toSavingsPackage(subscription: Subscription): SavingsPackage {
     nextPaymentDate: dueDate ?? undefined,
     nextPaymentAmount,
     registrationFeeDue: toAmount(subscription.registrationFeeDue),
+    referral: subscription.referral,
   };
 }

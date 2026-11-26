@@ -1,3 +1,5 @@
+import type { SubscriptionReferral } from "@/types/subscription";
+
 export type SavingsProgram = "Pinnacle" | "Chop Beta";
 export type SavingsStatus = "active" | "completed" | "pending-activation";
 export type HandStatus = "on-track" | "payment-missed" | "completed" | "pending-activation";
@@ -39,6 +41,7 @@ export interface SavingsPackage {
   nextPaymentDate?: string;
   nextPaymentAmount: number;
   registrationFeeDue: number;
+  referral?: SubscriptionReferral | null;
   benefit?: string;
 }
 

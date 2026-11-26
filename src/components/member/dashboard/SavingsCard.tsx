@@ -1,5 +1,7 @@
 // components/member/dashboard/SavingsCard.tsx
 import Link from "next/link";
+import ReferralCodeSection from "@/components/member/savings/ReferralCodeSection";
+import type { SubscriptionReferral } from "@/types/subscription";
 import {
   AlertTriangle,
   ArrowRight,
@@ -30,6 +32,7 @@ type SavingsPlan = {
   overdueTotal: number;
   overdueLateFees: number;
   nextPaymentDate?: string;
+  referral?: SubscriptionReferral | null;
   status: "Active" | "Completed" | "Needs Attention" | "Pending Activation";
 };
 
@@ -140,6 +143,8 @@ export function SavingsCard({
           />
         </div>
       </div>
+
+      <ReferralCodeSection referral={plan.referral} />
 
       {/* Action needed: the button sits next to the reason for it */}
       {hasOverdue && (

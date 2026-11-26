@@ -15,6 +15,7 @@ export type AccountDetails = {
     password: string;
     confirmPassword: string;
     agreed: boolean;
+    referralCode: string
 };
 
 const initialValues: AccountDetails = {
@@ -25,6 +26,7 @@ const initialValues: AccountDetails = {
     password: "",
     confirmPassword: "",
     agreed: false,
+    referralCode: ""
 };
 
 const validationSchema = Yup.object({
@@ -45,10 +47,12 @@ const validationSchema = Yup.object({
 
 export function CreateAccountStep({
     onNext,
-    loading
+    loading,
+    referralCode = "",
 }: {
     onNext: (values: AccountDetails) => void;
-    loading: boolean
+    loading: boolean;
+    referralCode?: string;
 }) {
     return (
         <div className="w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container p-6 sm:p-10">
@@ -62,7 +66,8 @@ export function CreateAccountStep({
             </div>
 
             <Formik
-                initialValues={initialValues}
+                initialValues={{ ...initialValues, referralCode }}
+                enableReinitialize
                 validationSchema={validationSchema}
                 onSubmit={(values) => onNext(values)}
             >
@@ -118,6 +123,13 @@ export function CreateAccountStep({
                             error={errors.phone}
                             touched={touched.phone}
                             inputMode="numeric"
+                        />
+
+                        <CustomInput
+                            label="Referral Code"
+                            placeholder="Enter a referral code (optional)"
+                            onChange={handleChange("referralCode")}
+                            value={values.referralCode}
                         />
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

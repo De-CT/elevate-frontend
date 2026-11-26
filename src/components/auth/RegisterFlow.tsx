@@ -6,11 +6,14 @@ import { createAccount } from "@/backend/auth";
 import { AuthHeader } from "./AuthHeader";
 import { CreateAccountStep, type AccountDetails } from "./CreateAccountStep";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function RegisterFlow() {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+    const searchParams = useSearchParams();
+    const referralCode = searchParams.get("referralCode")?.trim() ?? "";
     const setAuthToken = useAuthStore((state) => state.setAuthToken);
 
     const handleAccountSubmit = async (values: AccountDetails) => {
@@ -22,6 +25,7 @@ export default function RegisterFlow() {
                 email: values.email,
                 phone: values.phone,
                 password: values.password,
+                referralCode: values.referralCode.trim() || null,
             });
             toast.success("Account created successfully");
             setAuthToken(res);
@@ -39,7 +43,11 @@ export default function RegisterFlow() {
 
             <main className="flex-1 w-full py-8 md:py-12 px-4 sm:px-6 flex flex-col items-center">
                 <div className="w-full max-w-4xl flex flex-col items-center">
-                    <CreateAccountStep onNext={handleAccountSubmit} loading={loading} />
+                    <CreateAccountStep
+                        onNext={handleAccountSubmit}
+                        loading={loading}
+                        referralCode={referralCode}
+                    />
                 </div>
             </main>
 

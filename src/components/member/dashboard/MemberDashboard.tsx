@@ -9,7 +9,7 @@ import { OpportunitiesSection } from "./OpportunitiesSection";
 import { SupportBanner } from "./SupportBanner";
 import { opportunities } from "./dashboard-data";
 import { useUserStore, type UserProfile } from "@/store/useUserStore";
-import type { Subscription } from "@/types/subscription";
+import type { Subscription, SubscriptionReferral } from "@/types/subscription";
 
 export type DashboardSavingsPlan = {
     id: string;
@@ -31,6 +31,7 @@ export type DashboardSavingsPlan = {
     overdueTotal: number;
     overdueLateFees: number;
     nextPaymentDate?: string;
+    referral?: SubscriptionReferral | null;
     status: "Active" | "Completed" | "Needs Attention" | "Pending Activation";
 };
 
@@ -107,6 +108,7 @@ function toDashboardPlan(subscription: Subscription): DashboardSavingsPlan {
       registrationFeeDue: amount(subscription.registrationFeeDue),
       pendingHands,
       nextPaymentDate: subscription.nextDue?.date ?? undefined,
+    referral: subscription.referral,
       status: allCompleted
         ? "Completed"
         : hands.length > 0 && pendingHands === hands.length

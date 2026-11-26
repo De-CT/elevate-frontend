@@ -10,6 +10,7 @@ import {
 } from "./savings-utils";
 import SavingsProgress from "./SavingsProgress";
 import HandsSummary from "./HandsList";
+import ReferralCodeSection from "./ReferralCodeSection";
 
 interface Props {
   savings: SavingsPackage;
@@ -71,6 +72,8 @@ export default function SavingsCard({
       </header>
 
       <SavingsProgress savings={savings} />
+
+      <ReferralCodeSection referral={savings.referral} />
 
       {savings.registrationFeeDue > 0 && (
         <p className="rounded-lg border border-tertiary-fixed-dim/50 bg-tertiary-fixed/30 p-3 font-body text-sm text-on-surface">

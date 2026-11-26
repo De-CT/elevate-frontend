@@ -4,9 +4,10 @@ export interface RegisterData {
   email: string;
   phone: string;
   password: string;
+  referralCode: string | null;
 }
 
 export interface LoginData {
-    identifier: string;
-    password: string
+  identifier: string;
+  password: string;
 }

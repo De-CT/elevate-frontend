@@ -10,6 +10,16 @@ export type SubscriptionOverdue = SubscriptionDue & {
   cycles: number;
 };
 
+export type SubscriptionReferral = {
+  code: string;
+  status: string;
+  activeFrom: string;
+  expiresAt: string;
+  totalSlots: number;
+  usedSlots: number;
+  availableSlots: number;
+};
+
 export type SubscriptionHand = {
   id: string;
   handNumber: number;
@@ -29,4 +39,5 @@ export type Subscription = {
   registrationFeeDue: string;
   nextDue: SubscriptionDue | null;
   hands: SubscriptionHand[];
+  referral?: SubscriptionReferral | null;
 };

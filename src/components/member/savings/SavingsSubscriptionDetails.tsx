@@ -16,6 +16,7 @@ import { claimSubscription, getSubscription, retryOverDuePayment } from "@/backe
 import type { Subscription } from "@/types/subscription";
 import type { SavingsPackage } from "./savings-types";
 import { toSavingsPackage } from "@/utils/subscription-mapping";
+import ReferralCodeSection from "./ReferralCodeSection";
 import {
   formatMoney,
   getProgress,
@@ -272,6 +273,8 @@ export default function SavingsSubscriptionDetails({ subscriptionId }: Props) {
               </div>
             </div>
           </header>
+
+          <ReferralCodeSection referral={subscription.referral} />
 
           {/* Actions needed (only when relevant) */}
           {hasOverdue && (
